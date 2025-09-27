@@ -1,12 +1,13 @@
 import { eq } from "drizzle-orm";
 import { db } from "./db";
 import { kvStore } from "./schema";
+import { redis } from "./redis";
 
 export class ConfigManager {
 	/**
 	 * Set a key-value pair
 	 * @param key Key
-	 * @param value Vsalue
+	 * @param value Value
 	 */
 	static async set(key: string, value: string): Promise<void> {
 		const now = new Date();
@@ -29,6 +30,8 @@ export class ConfigManager {
 				updatedAt: now,
 			});
 		}
+
+		await redis.set(`ucaptcha:config:${key}`, value);
 	}
 
 	/**
@@ -37,8 +40,19 @@ export class ConfigManager {
 	 * @returns Value or null if not found
 	 */
 	static async get(key: string): Promise<string | null> {
+		const cachedValue = await redis.get(`ucaptcha:config:${key}`);
+		if (cachedValue !== null) {
+			return cachedValue;
+		}
+
 		const result = await db.select().from(kvStore).where(eq(kvStore.key, key));
-		return result.length > 0 ? result[0].value : null;
+		const value = result.length > 0 ? result[0].value : null;
+
+		if (value !== null) {
+			await redis.set(`ucaptcha:config:${key}`, value);
+		}
+
+		return value;
 	}
 
 	/**
@@ -47,6 +61,8 @@ export class ConfigManager {
 	 */
 	static async delete(key: string): Promise<void> {
 		await db.delete(kvStore).where(eq(kvStore.key, key));
+		
+		await redis.del(`ucaptcha:config:${key}`);
 	}
 
 	/**

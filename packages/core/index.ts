@@ -20,7 +20,7 @@ const base64UrlToBigInt = (base64Url: string): bigint => {
 	return result;
 };
 
-interface RSAComponents {
+export interface RSAComponents {
 	p: bigint;
 	q: bigint;
 	N: bigint;
