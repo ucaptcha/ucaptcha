@@ -1,0 +1,5 @@
+{
+	"name": "@ucaptcha/core",
+	"private": false,
+	"main": "./index.js"
+}

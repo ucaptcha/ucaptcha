@@ -1,0 +1,18 @@
+{
+	"name": "ucaptcha",
+	"private": false,
+	"type": "module",
+	"workspaces": [
+		"packages/backend"
+	],
+	"scripts": {
+		"format": "prettier --write ."
+	},
+	"devDependencies": {
+		"@types/bun": "latest",
+		"prettier": "^3.6.2"
+	},
+	"peerDependencies": {
+		"typescript": "^5"
+	}
+}
