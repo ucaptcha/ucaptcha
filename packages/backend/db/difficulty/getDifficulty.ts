@@ -1,9 +1,19 @@
 import { redis } from "@/db/redis";
 import { db } from "@/db/pg";
 import { eq, and } from "drizzle-orm";
-import { difficultyConfigTable } from "../schema";
+import { difficultyConfigTable } from "@/db/schema";
 
-export async function getDifficultyConfig(siteID: number, resourceID: number) {
+interface DifficultyConfig {
+	default: number;
+	d15sec: number;
+	d30sec: number;
+	d1min: number;
+	d3min: number;
+	d5min: number;
+	d10min: number;
+}
+
+export async function getDifficultyConfig(siteID: number, resourceID: number): Promise<DifficultyConfig | null> {
 	const resourceCacheKey = resourceID ? `-${resourceID}` : "";
 	const cacheKey = `ucaptcha:difficulty_config:${siteID}${resourceCacheKey}`;
 
@@ -12,15 +22,7 @@ export async function getDifficultyConfig(siteID: number, resourceID: number) {
 		return JSON.parse(cachedData);
 	}
 
-	let data: {
-		default: number;
-		d15sec: number;
-		d30sec: number;
-		d1min: number;
-		d3min: number;
-		d5min: number;
-		d10min: number;
-	}[];
+	let data: DifficultyConfig[];
 	const selection = {
 		default: difficultyConfigTable.difficulty_default,
 		d15sec: difficultyConfigTable.difficulty_15_sec,

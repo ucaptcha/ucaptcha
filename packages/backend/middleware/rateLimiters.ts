@@ -1,57 +1,52 @@
 import type { BlankEnv } from "hono/types";
-import { getConnInfo } from "hono/bun";
 import { Context, Next } from "hono";
-import { generate as generateRandomId } from "@alikia/random-key";
 import { RateLimiter } from "@koshnic/ratelimit";
 import { redis } from "@/db/redis";
+import { db } from "@/db/pg.ts";
+import { challengesLogTable, sitesTable, usersTable } from "@/db/schema.ts";
+import { eq, count, gte, and } from "drizzle-orm";
+import { errorResponse } from "@/lib/common.ts";
 
-export const getUserIP = (c: Context) => {
-	let ipAddr = null;
-	const info = getConnInfo(c);
-	if (info.remote && info.remote.address) {
-		ipAddr = info.remote.address;
+export const getAndUpdateUserQuota = async (uid: number) => {
+	const cacheKey = `ucaptcha:quota:${uid}`;
+	const cachedData = await redis.get(cacheKey);
+	if (cachedData) {
+		return Number.parseInt(cachedData);
 	}
-	const forwardedFor = c.req.header("X-Forwarded-For");
-	if (forwardedFor) {
-		ipAddr = forwardedFor.split(",")[0];
-	}
-	return ipAddr;
-};
+	const now = new Date();
+	const startOfMonth = new Date(now.getFullYear(), now.getMonth(), 1);
+	const num = await db
+		.select({ count: count() })
+		.from(challengesLogTable)
+		.innerJoin(sitesTable, eq(challengesLogTable.siteId, sitesTable.id))
+		.innerJoin(usersTable, eq(sitesTable.userID, usersTable.id))
+		.where(and(eq(usersTable.id, uid), gte(challengesLogTable.createdAt, startOfMonth)));
 
-export const getIdentifier = (c: Context, includeIP: boolean = true) => {
-	let ipAddr = generateRandomId(6);
-	if (getUserIP(c)) {
-		ipAddr = getUserIP(c);
-	}
-	const path = c.req.path;
-	const method = c.req.method;
-	const ipIdentifier = includeIP ? `@${ipAddr}` : "";
-	return `${method}-${path}${ipIdentifier}`;
+	await redis.set(cacheKey, num[0].count);
+	return num[0].count;
 };
 
 export const newChallengeRateLimiter = async (c: Context<BlankEnv, "/challenge/new", {}>, next: Next) => {
 	const limiter = new RateLimiter(redis);
 	const params = c.req.query();
 	const siteKey = params.siteKey;
-	const resource = params.resource;
-	if (!siteKey || !resource) {
-		return c.json(
-			{
-				message: "Missing query parameters."
-			},
-			400
-		);
+	if (!siteKey) {
+		return errorResponse(c, "Missing query parameters.", 400);
 	}
-	const identifier = `${siteKey}-${resource}`;
+	const userID = await db.select().from(sitesTable).where(eq(sitesTable.siteKey, siteKey));
+	if (userID.length === 0) {
+		return errorResponse(c, "Given siteKey does not exist.", 404);
+	}
+	const identifier = `qps-limit-${userID}`;
 	const { allowed, retryAfter } = await limiter.allowPerSecond(identifier, 50);
 
 	if (!allowed) {
-		return c.json(
-			{
-				message: `Too many requests, please retry after ${Math.round(retryAfter)} seconds.`
-			},
-			429
-		);
+		return errorResponse(c, `Too many requests, please retry after ${Math.round(retryAfter)} seconds.`, 429);
+	}
+
+	const quota = await getAndUpdateUserQuota(userID[0].userID);
+	if (quota >= 1000000) {
+		return errorResponse(c, "You have reached your quota for this month.", 429);
 	}
 
 	await next();

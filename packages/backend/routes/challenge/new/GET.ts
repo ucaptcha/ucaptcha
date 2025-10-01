@@ -2,9 +2,10 @@ import { getDifficultyConfig } from "@/db/difficulty/getDifficulty";
 import { getResourceID } from "@/db/resources/getResource";
 import { getSiteIDFromKey } from "@/db/sites/getSite";
 import { Context } from "hono";
-import { generateValidG, RSAComponents } from "@core/index";
+import { generateRSAKey, generateValidG, RSAComponents } from "@core/index";
 import { redis } from "@/db/redis";
 import { generate as generateKey } from "@alikia/random-key";
+import { errorResponse } from "@/lib/common.ts";
 
 export interface Challenge {
 	id: string;
@@ -18,11 +19,26 @@ export interface Challenge {
 const challengeKey = (id: string) => `ucaptcha:challenge:${id}`;
 
 const DEFAULT_CHALLENGE_EXPIRATION_SECONDS = 300;
+const currentKey = "ucaptcha:challenge_key:current";
+const lastKey = "ucaptcha:challenge_key:last";
+const KEY_TTL = 300;
+const KEY_BITS = 1024;
+
+export async function rotateKey() {
+	const key = await redis.get(currentKey);
+	if (key) {
+		await redis.setex(lastKey, KEY_TTL, key);
+	}
+	const newKey = await generateRSAKey(KEY_BITS);
+	await redis.setex(currentKey, KEY_TTL, serializeKey(newKey));
+}
 
 async function getKeyForChallenge() {
-	const key = await redis.get("ucaptcha:challenge_key:current");
+	const key = await redis.get(currentKey);
 	if (!key) {
-		
+		const newKey = await generateRSAKey(KEY_BITS);
+		await redis.setex(currentKey, KEY_TTL, serializeKey(newKey));
+		return newKey;
 	}
 	return deserializeKey(key);
 }
@@ -64,6 +80,7 @@ export async function generateChallenge(difficulty: number): Promise<Challenge |
 		...challenge
 	};
 }
+
 export async function getChallengeByID(id: string): Promise<Challenge | null> {
 	const challengeJson = await redis.get(challengeKey(id));
 	if (!challengeJson) {
@@ -75,21 +92,26 @@ export async function getChallengeByID(id: string): Promise<Challenge | null> {
 export const getNewChallenge = async (c: Context) => {
 	const params = c.req.query();
 	if (!params.siteKey || !params.resource) {
-		return c.json(
-			{
-				message: "Missing query parameters."
-			},
-			400
-		);
+		return errorResponse(c, "Missing query parameters.", 400);
 	}
 	const siteKey = params.siteKey;
 	const resource = params.resource;
 	const siteID = await getSiteIDFromKey(siteKey);
 	const resourceID = await getResourceID(siteKey, resource);
+	if (!siteID || !resourceID) {
+		return errorResponse(c, "Given siteKey or resource does not exist.", 404);
+	}
 	const difficultyConfig = await getDifficultyConfig(siteID, resourceID);
+	const difficulty = difficultyConfig.default;
+	const challenge = await generateChallenge(difficulty);
+	if (!challenge) {
+		return errorResponse(c, "No challenge available.", 500);
+	}
+	await redis.setex(challengeKey(challenge.id), KEY_TTL, JSON.stringify(challenge));
 	return c.json({
-		siteKey,
-		resource,
-		difficulty: difficultyConfig
+		id: challenge.id,
+		g: challenge.g,
+		T: challenge.T,
+		N: challenge.N
 	});
 };
