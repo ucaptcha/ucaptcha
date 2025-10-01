@@ -1,11 +1,11 @@
-import { defineConfig } from 'drizzle-kit';
-import { DB_PATH } from './lib/db';
+import { defineConfig } from "drizzle-kit";
 
 export default defineConfig({
-	schema: "./lib/db/schema.ts",
-	out: "./drizzle",
-	dialect: "sqlite",
+	out: "./db/drizzle",
+	schema: "./db/schema.ts",
+	dialect: "postgresql",
 	dbCredentials: {
-		url: DB_PATH,
+		url: process.env.DATABASE_URL!
 	},
+	casing: "snake_case",
 });

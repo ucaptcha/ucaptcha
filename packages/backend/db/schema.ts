@@ -92,7 +92,6 @@ export const difficultyConfigTable = pgTable(
 		difficulty_3_min: integer(),
 		difficulty_5_min: integer(),
 		difficulty_10_min: integer(),
-		ipBased: boolean().notNull(),
 		createdAt: timestamp({ withTimezone: true }).defaultNow().notNull(),
 		updatedAt: timestamp({ withTimezone: true }).defaultNow().notNull()
 	},
