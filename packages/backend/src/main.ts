@@ -4,12 +4,17 @@ import { startServer } from "./startServer.ts";
 import { configureRoutes } from "./routing.ts";
 import { configureMiddleWares } from "./middleware.ts";
 import { notFoundRoute } from "routes/404.ts";
-import { rotateKey } from "@/routes/challenge/index.ts";
+import { errorResponse } from "@/lib/common.ts";
+import { rotateKey } from "@/lib/keys.ts";
 
 type Variables = TimingVariables;
 const app = new Hono<{ Variables: Variables }>();
 
 app.notFound(notFoundRoute);
+app.onError((err, c) => {
+    console.error(err)
+    return errorResponse(c, err.message, 500);
+})
 
 configureMiddleWares(app);
 configureRoutes(app);
