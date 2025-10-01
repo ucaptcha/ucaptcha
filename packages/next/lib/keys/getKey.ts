@@ -10,7 +10,7 @@ export async function getKeyForChallenge() {
 	const randomIndex = Math.floor(Math.random() * keyCount);
 	const cachedKey = await redis.get(keyIndex(randomIndex));
 	if (cachedKey) {
-		return deserializeKey(cachedKey) as RSAComponents;
+		return deserializeKey(cachedKey);
 	}
 	const keyBits = await getKeyBitsConfig();
 	const generatedKey = await generateRSAKey(keyBits);

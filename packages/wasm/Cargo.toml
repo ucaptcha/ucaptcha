@@ -1,0 +1,33 @@
+[package]
+name = "ucaptcha-vdf-solver-wasm"
+version = "0.1.0"
+authors = ["alikia2x <alikia2x@outlook.com>"]
+edition = "2018"
+
+[lib]
+crate-type = ["cdylib", "rlib"]
+
+[features]
+default = ["console_error_panic_hook"]
+
+[dependencies]
+wasm-bindgen = "0.2.84"
+num-bigint = "0.4.6"
+num-traits = "0.2.19"
+malachite-base = "0.6.1"
+malachite-nz = "0.6.1"
+
+# The `console_error_panic_hook` crate provides better debugging of panics by
+# logging them with `console.error`. This is great for development, but requires
+# all the `std::fmt` and `std::panicking` infrastructure, so isn't great for
+# code size when deploying.
+console_error_panic_hook = { version = "0.1.7", optional = true }
+
+[dev-dependencies]
+wasm-bindgen-test = "0.3.34"
+
+[profile.release]
+# Tell `rustc` to optimize for small code size.
+opt-level = 3
+lto = true
+codegen-units = 1
