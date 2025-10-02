@@ -1,6 +1,6 @@
-import { redis } from "@/db/redis";
-import { db } from "@/db/pg";
-import { usersTable } from "@/db/schema";
+import { redis } from "@/redis";
+import { db } from "@/pg";
+import { usersTable } from "@/schema";
 import { eq } from "drizzle-orm";
 
 export const getJWTSecretForUser = async (uid: number) => {

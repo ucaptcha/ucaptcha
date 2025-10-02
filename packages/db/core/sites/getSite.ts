@@ -1,7 +1,7 @@
 import { eq } from "drizzle-orm";
-import { sitesTable } from "@/db/schema";
-import { db } from "@/db/pg";
-import { redis } from "@/db/redis";
+import { sitesTable } from "@/schema";
+import { db } from "@/pg";
+import { redis } from "@/redis";
 
 export async function getSiteIDFromKey(siteKey: string) {
     const cacheKey = `ucaptcha:site_id:${siteKey}`;

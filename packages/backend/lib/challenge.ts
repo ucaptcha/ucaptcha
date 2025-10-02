@@ -1,5 +1,5 @@
 import { generateValidG, verifyVDF } from "@core/index";
-import { redis } from "@/db/redis";
+import { redis } from "@db/redis";
 import { generate as generateKey } from "@alikia/random-key";
 import { getKeyForChallenge } from "./keys";
 

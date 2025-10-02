@@ -1,9 +1,9 @@
 import type { BlankEnv } from "hono/types";
 import { Context, Next } from "hono";
 import { RateLimiter } from "@koshnic/ratelimit";
-import { redis } from "@/db/redis";
-import { db } from "@/db/pg.ts";
-import { challengesLogTable, sitesTable, usersTable } from "@/db/schema.ts";
+import { redis } from "@db/redis";
+import { db } from "@db/pg.ts";
+import { challengesLogTable, sitesTable, usersTable } from "@db/schema.ts";
 import { eq, count, gte, and } from "drizzle-orm";
 import { errorResponse } from "@/lib/common.ts";
 
@@ -11,6 +11,7 @@ export const getAndUpdateUserQuota = async (uid: number) => {
 	const cacheKey = `ucaptcha:quota:${uid}`;
 	const cachedData = await redis.get(cacheKey);
 	if (cachedData) {
+		await redis.incr(cacheKey);
 		return Number.parseInt(cachedData);
 	}
 	const now = new Date();
@@ -18,15 +19,19 @@ export const getAndUpdateUserQuota = async (uid: number) => {
 	const num = await db
 		.select({ count: count() })
 		.from(challengesLogTable)
-		.innerJoin(sitesTable, eq(challengesLogTable.siteId, sitesTable.id))
+		.innerJoin(sitesTable, eq(challengesLogTable.siteID, sitesTable.id))
 		.innerJoin(usersTable, eq(sitesTable.userID, usersTable.id))
 		.where(and(eq(usersTable.id, uid), gte(challengesLogTable.createdAt, startOfMonth)));
-
-	await redis.set(cacheKey, num[0].count);
+	const secsToNextMonth =
+		(new Date(now.getFullYear(), now.getMonth() + 1, 1).getTime() - now.getTime()) / 1000;
+	await redis.setex(cacheKey, Math.round(secsToNextMonth), num[0].count);
 	return num[0].count;
 };
 
-export const newChallengeRateLimiter = async (c: Context<BlankEnv, "/challenge/new", {}>, next: Next) => {
+export const newChallengeRateLimiter = async (
+	c: Context<BlankEnv, "/challenge/new", {}>,
+	next: Next
+) => {
 	const limiter = new RateLimiter(redis);
 	const params = c.req.query();
 	const siteKey = params.siteKey;
@@ -41,7 +46,11 @@ export const newChallengeRateLimiter = async (c: Context<BlankEnv, "/challenge/n
 	const { allowed, retryAfter } = await limiter.allowPerSecond(identifier, 50);
 
 	if (!allowed) {
-		return errorResponse(c, `Too many requests, please retry after ${Math.round(retryAfter)} seconds.`, 429);
+		return errorResponse(
+			c,
+			`Too many requests, please retry after ${Math.round(retryAfter)} seconds.`,
+			429
+		);
 	}
 
 	const quota = await getAndUpdateUserQuota(userID[0].userID);

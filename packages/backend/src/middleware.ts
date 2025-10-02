@@ -4,11 +4,13 @@ import { Variables } from "hono/types";
 import { corsMiddleware } from "@/middleware/cors";
 import { contentType } from "middleware/contentType.ts";
 import { bodyLimitForPing } from "middleware/bodyLimits.ts";
+import { newChallengeRateLimiter } from "@/middleware/rateLimiters";
 
 export function configureMiddleWares(app: Hono<{ Variables: Variables }>) {
 	app.use("*", corsMiddleware);
 
 	app.use("*", contentType);
+	app.use("/challenge/new", newChallengeRateLimiter);
 	app.use(timing());
 
 	app.use("*", bodyLimitForPing);

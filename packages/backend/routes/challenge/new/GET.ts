@@ -1,11 +1,13 @@
-import { getDifficultyConfig } from "@/db/difficulty/getDifficulty";
-import { getResourceID } from "@/db/resources/getResource";
-import { getSiteIDFromKey, getUserIDFromSiteID } from "@/db/sites/getSite";
+import { getDifficultyConfig } from "@db/difficulty/getDifficulty";
+import { getResourceID } from "@db/resources/getResource";
+import { getSiteIDFromKey, getUserIDFromSiteID } from "@db/sites/getSite";
 import { Context } from "hono";
-import { redis } from "@/db/redis";
+import { redis } from "@db/redis";
 import { errorResponse } from "@/lib/common.ts";
 import { challengeKey, generateChallenge } from "@/lib/challenge";
 import { KEY_TTL } from "@/lib/keys";
+import { db } from "@db/pg";
+import { challengesLogTable } from "@db/schema";
 
 export const getNewChallenge = async (c: Context) => {
 	const params = c.req.query();
@@ -27,6 +29,14 @@ export const getNewChallenge = async (c: Context) => {
 		return errorResponse(c, "No challenge available.", 500);
 	}
 	await redis.setex(challengeKey(challenge.id), KEY_TTL, JSON.stringify(challenge));
+
+	await db.insert(challengesLogTable).values({
+		challengeID: challenge.id,
+		siteID: siteID,
+		resourceID: resourceID,
+		ttl: KEY_TTL,
+	});
+
 	return c.json({
 		id: challenge.id,
 		g: challenge.g,

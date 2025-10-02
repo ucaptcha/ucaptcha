@@ -57,7 +57,7 @@ export const challengesLogTable = pgTable(
 	{
 		id: integer().primaryKey().generatedAlwaysAsIdentity(),
 		challengeID: text().notNull(),
-		siteId: integer().notNull(),
+		siteID: integer().notNull(),
 		resourceID: integer().notNull(),
 		ttl: integer().notNull(),
 		correctlyAnswered: boolean().notNull().default(false),

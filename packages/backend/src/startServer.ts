@@ -1,7 +1,7 @@
 import { serve } from "bun";
 import { Hono } from "hono";
 import os from "os";
-import { BlankSchema, Variables } from "hono/types";
+import { Variables } from "hono/types";
 
 function getLocalIpAddress(): string {
 	const interfaces = os.networkInterfaces();

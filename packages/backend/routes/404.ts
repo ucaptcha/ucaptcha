@@ -1,10 +1,6 @@
+import { errorResponse } from "@/lib/common";
 import { Context } from "hono";
 
 export const notFoundRoute = (c: Context) => {
-	return c.json(
-		{
-			message: "Not Found"
-		},
-		404
-	);
+	return errorResponse(c, "Route not found.", 404);
 };

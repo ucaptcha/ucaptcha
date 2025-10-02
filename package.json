@@ -3,7 +3,10 @@
 	"private": false,
 	"type": "module",
 	"workspaces": [
-		"packages/backend"
+		"packages/backend",
+		"packages/dashboard",
+		"packages/core",
+		"packages/db"
 	],
 	"scripts": {
 		"format": "prettier --write ."

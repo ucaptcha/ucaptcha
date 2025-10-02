@@ -1,7 +1,7 @@
-import { redis } from "@/db/redis";
-import { db } from "@/db/pg";
+import { redis } from "@/redis";
+import { db } from "@/pg";
 import { eq, and } from "drizzle-orm";
-import { difficultyConfigTable } from "@/db/schema";
+import { difficultyConfigTable } from "@/schema";
 
 interface DifficultyConfig {
 	default: number;

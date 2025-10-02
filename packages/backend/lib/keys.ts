@@ -1,5 +1,5 @@
 import { generateRSAKey, RSAComponents } from "@core/index";
-import { redis } from "@/db/redis"
+import { redis } from "@db/redis"
 
 const currentKey = "ucaptcha:challenge_key:current";
 export const KEY_TTL = 300;

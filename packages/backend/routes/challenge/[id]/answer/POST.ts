@@ -1,9 +1,12 @@
 import { Context } from "hono";
-import { redis } from "@/db/redis";
+import { redis } from "@db/redis";
 import { errorResponse } from "@/lib/common.ts";
 import { getChallengeByID, updateChallengeStatus, verifyChallenge } from "@/lib/challenge";
 import { sign } from "hono/jwt";
-import { getJWTSecretForUser } from "@/db/jwt/getSecret";
+import { getJWTSecretForUser } from "@db/jwt/getSecret";
+import { db } from "@db/pg";
+import { challengesLogTable } from "@db/schema";
+import { eq } from "drizzle-orm";
 
 const challengeKey = (id: string) => `ucaptcha:challenge:${id}`;
 
@@ -24,8 +27,12 @@ export const answerChallenge = async (c: Context<null, "/challenge/:id/answer", 
 	if (!answer) {
 		return errorResponse(c, "Missing answer.", 400);
 	}
-	const isCorrect = verifyChallenge(challenge, answer);
+	const isCorrect = await verifyChallenge(challenge, answer);
 	const currentTTL = await redis.ttl(challengeKey(id));
+	await db
+		.update(challengesLogTable)
+		.set({ answeredAt: new Date() })
+		.where(eq(challengesLogTable.challengeID, id));
 	if (!isCorrect) {
 		await updateChallengeStatus(id, "failed");
 		return errorResponse(c, "Incorrect answer.", 403);
@@ -41,6 +48,10 @@ export const answerChallenge = async (c: Context<null, "/challenge/:id/answer", 
 		secret
 	);
 	await updateChallengeStatus(id, "solved");
+	await db
+		.update(challengesLogTable)
+		.set({ correctlyAnswered: true })
+		.where(eq(challengesLogTable.challengeID, id));
 	return c.json({
 		token: jwt
 	});
