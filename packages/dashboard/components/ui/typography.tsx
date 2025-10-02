@@ -3,11 +3,12 @@ import { tv } from "tailwind-variants";
 const tg = tv({
 	slots: {
 		h1: "scroll-m-20 text-4xl font-extrabold tracking-tight text-balance",
-		h2: "scroll-m-20 pb-2 text-3xl font-semibold tracking-tight"
+		h2: "scroll-m-20 pb-2 text-3xl font-semibold tracking-tight",
+		p: "leading-7"
 	},
 });
 
-const { h1, h2 } = tg();
+const { h1, h2, p } = tg();
 
 function TypographyH1({
 	children,
@@ -39,7 +40,23 @@ function TypographyH2({
 	);
 }
 
+function TypographyP({
+	children,
+	className,
+	...rest
+}: {
+	className?: string;
+	children: React.ReactNode;
+}) {
+	return (
+		<p className={p({ className })} {...rest}>
+			{children}
+		</p>
+	);
+}
+
 export const Typography = {
 	H1: TypographyH1,
-	H2: TypographyH2
+	H2: TypographyH2,
+	P: TypographyP
 };

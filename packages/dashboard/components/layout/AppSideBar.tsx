@@ -5,25 +5,42 @@ import {
 	SidebarGroup,
 	SidebarGroupContent,
 	SidebarGroupLabel,
+	SidebarHeader,
 	SidebarMenu,
 	SidebarMenuButton,
 	SidebarMenuItem
 } from "@/components/ui/sidebar";
-import { Home, FlaskConical } from "lucide-react";
+import { verifyAuthToken } from "@/lib/auth/jwt";
+import { Home, FlaskConical, Gauge } from "lucide-react";
+import { cookies } from 'next/headers'
 
-export function AppSidebar() {
+export async function AppSidebar() {
+	const cookieStore = await cookies()
+	const authToken = cookieStore.get('auth_token')!.value
+	const { payload } = await verifyAuthToken(authToken!);
 	return (
 		<Sidebar>
+			<SidebarHeader className="flex flex-col gap-2 p-2 border-b">
+				<SidebarMenu>
+					<SidebarMenuItem key="header">
+						<SidebarMenuButton asChild>
+							<a href="#">
+								<span className="text-base font-semibold">μCaptcha</span>
+							</a>
+						</SidebarMenuButton>
+					</SidebarMenuItem>
+				</SidebarMenu>
+			</SidebarHeader>
 			<SidebarContent>
 				<SidebarGroup>
-					<SidebarGroupLabel>user-name</SidebarGroupLabel>
+					<SidebarGroupLabel>Home</SidebarGroupLabel>
 					<SidebarGroupContent>
 						<SidebarMenu>
-							<SidebarMenuItem key="home">
+							<SidebarMenuItem key="dashboard">
 								<SidebarMenuButton asChild>
 									<a href="/">
-										<Home />
-										<span>Home</span>
+										<Gauge />
+										<span>Dashboard</span>
 									</a>
 								</SidebarMenuButton>
 							</SidebarMenuItem>

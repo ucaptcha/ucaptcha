@@ -1,17 +1,20 @@
 import { foreignKey, integer, pgEnum, pgTable, text, timestamp, boolean } from "drizzle-orm/pg-core";
+import { InferSelectModel } from 'drizzle-orm';
 
 export const userRoleEnum = pgEnum('user_role', ['user', 'admin']);
 
 export const usersTable = pgTable("users", {
 	id: integer().primaryKey().generatedAlwaysAsIdentity(),
 	name: text().notNull(),
-	email: text(),
+	email: text().unique(),
 	password: text(),
 	jwtSecret: text().notNull().default(""),
 	role: userRoleEnum().notNull().default("user"),
 	createdAt: timestamp({ withTimezone: true }).defaultNow().notNull(),
 	updatedAt: timestamp({ withTimezone: true }).defaultNow().notNull()
 });
+
+export type User = InferSelectModel<typeof usersTable>;
 
 export const sitesTable = pgTable(
 	"sites",
@@ -66,7 +69,7 @@ export const challengesLogTable = pgTable(
 	},
 	(table) => [
 		foreignKey({
-			columns: [table.siteId],
+			columns: [table.siteID],
 			foreignColumns: [sitesTable.id]
 		})
 			.onUpdate("cascade")
