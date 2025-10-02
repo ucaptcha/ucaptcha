@@ -16,6 +16,7 @@ num-bigint = "0.4.6"
 num-traits = "0.2.19"
 malachite-base = "0.6.1"
 malachite-nz = "0.6.1"
+js-sys = "0.3.0"
 
 # The `console_error_panic_hook` crate provides better debugging of panics by
 # logging them with `console.error`. This is great for development, but requires

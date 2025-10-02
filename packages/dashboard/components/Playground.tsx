@@ -6,9 +6,8 @@ import { Textarea } from "@/components/ui/textarea";
 import { atom, useAtom, useAtomValue, useSetAtom } from "jotai";
 import { Button } from "./ui/button";
 import { atomWithStorage } from "jotai/utils";
-import { compute_vdf } from "ucaptcha-vdf-wasm";
-import rust_wasm_init from "ucaptcha-vdf-wasm";
-import { useState } from "react";
+import * as Comlink from "comlink";
+import { useEffect, useRef, useState } from "react";
 
 export function buildUrl(
 	baseURL: string,
@@ -161,25 +160,60 @@ export function Validating({ className }: { className?: string }) {
 	);
 }
 
+type WorkerApi = {
+	computeVDF(g: string, N: string, T: bigint): Promise<string>;
+};
+
 export function Solving() {
 	const [serverResponse, setServerResponse] = useAtom(serverResponseAtom);
 	const [solving, setSolving] = useState(false);
 	const [challengeID, setChallengeID] = useState("");
+	const [timeStart, setTimeStart] = useState(0);
+	const [timeCost, setTimeCost] = useState(0);
 	const setResult = useSetAtom(resultAtom);
 	const apiURL = useAtomValue(apiUrlAtom);
+	const workerRef = useRef<Comlink.Remote<WorkerApi> | null>(null);
+	const workerInstance = useRef<Worker | null>(null);
 
 	async function solve() {
+		if (!workerRef.current) {
+			return 
+		}
 		try {
 			setSolving(true);
 			const { g, T, N } = JSON.parse(serverResponse);
-			await rust_wasm_init();
-			const challengeResultWasm = compute_vdf(g, N, T);
-			setResult(challengeResultWasm.toString());
+			const start = performance.now();
+			setTimeStart(start);
+			const result = await workerRef.current.computeVDF(g, N, T);
+			setResult(result.toString());
 			setSolving(false);
 		} finally {
 			setSolving(false);
 		}
 	}
+
+	useEffect(() => {
+		workerInstance.current = new Worker(new URL("@/workers/vdfWorkers.ts", import.meta.url), {
+			type: "module"
+		});
+
+		workerRef.current = Comlink.wrap<WorkerApi>(workerInstance.current);
+
+		return () => {
+			workerInstance.current?.terminate();
+		};
+	}, []);
+
+	useEffect(() => {
+		const timer = setInterval(() => {
+			if (solving) {
+				const timeEnd = performance.now();
+				const timeDiff = (timeEnd - timeStart);
+				setTimeCost(timeDiff);
+			}
+		}, 16);
+		return () => clearInterval(timer);
+	}, [solving]);
 
 	async function getChallenge() {
 		const url = buildUrl(apiURL, `/challenge/${challengeID}`);
@@ -214,6 +248,10 @@ export function Solving() {
 			<Button className="mt-4" onClick={solve} disabled={solving}>
 				{solving ? "Solving..." : "Solve"}
 			</Button>
+			<div className="mt-4">
+				<span className="font-medium">Time Cost: </span>
+				<span>{timeCost.toFixed(0)} ms</span>
+			</div>
 		</div>
 	);
 }

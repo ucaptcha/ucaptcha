@@ -11,7 +11,7 @@ import {
 	SidebarMenuItem
 } from "@/components/ui/sidebar";
 import { verifyAuthToken } from "@/lib/auth/jwt";
-import { Home, FlaskConical, Gauge } from "lucide-react";
+import { ShieldCheck, FlaskConical, Gauge } from "lucide-react";
 import { cookies } from 'next/headers'
 
 export async function AppSidebar() {
@@ -19,12 +19,13 @@ export async function AppSidebar() {
 	const authToken = cookieStore.get('auth_token')!.value
 	const { payload } = await verifyAuthToken(authToken!);
 	return (
-		<Sidebar>
-			<SidebarHeader className="flex flex-col gap-2 p-2 border-b">
+		<Sidebar collapsible="offcanvas" variant="inset">
+			<SidebarHeader className="flex flex-col gap-2 p-2">
 				<SidebarMenu>
 					<SidebarMenuItem key="header">
 						<SidebarMenuButton asChild>
 							<a href="#">
+								<ShieldCheck className="!size-5" />
 								<span className="text-base font-semibold">μCaptcha</span>
 							</a>
 						</SidebarMenuButton>
