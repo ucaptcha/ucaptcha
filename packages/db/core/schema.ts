@@ -1,4 +1,4 @@
-import { foreignKey, integer, pgEnum, pgTable, text, timestamp, boolean, index } from "drizzle-orm/pg-core";
+import { foreignKey, integer, pgEnum, pgTable, text, timestamp, boolean, index, jsonb } from "drizzle-orm/pg-core";
 import { InferSelectModel } from 'drizzle-orm';
 
 export const userRoleEnum = pgEnum('user_role', ['user', 'admin']);
@@ -35,6 +35,8 @@ export const sitesTable = pgTable(
 			.onDelete("cascade")
 	]
 );
+
+export type Site = InferSelectModel<typeof sitesTable>;
 
 export const resourcesTable = pgTable(
 	"resources",
@@ -123,4 +125,15 @@ export const difficultyConfigTable = pgTable(
 			.onUpdate("cascade")
 			.onDelete("cascade")
 	]
+);
+
+export const settingsTable = pgTable(
+	"settings",
+	{
+		id: integer().primaryKey().generatedAlwaysAsIdentity(),
+		key: text().notNull().unique(),
+		value: jsonb().notNull(),
+		createdAt: timestamp({ withTimezone: true }).defaultNow().notNull(),
+		updatedAt: timestamp({ withTimezone: true }).defaultNow().notNull()
+	}
 );

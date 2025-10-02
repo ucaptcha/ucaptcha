@@ -7,11 +7,10 @@ import { challengesLogTable, sitesTable, usersTable } from "@db/schema.ts";
 import { eq, count, gte, and } from "drizzle-orm";
 import { errorResponse } from "@/lib/common.ts";
 
-export const getAndUpdateUserQuota = async (uid: number) => {
+export const getUserQuota = async (uid: number) => {
 	const cacheKey = `ucaptcha:quota:${uid}`;
 	const cachedData = await redis.get(cacheKey);
 	if (cachedData) {
-		await redis.incr(cacheKey);
 		return Number.parseInt(cachedData);
 	}
 	const now = new Date();
@@ -38,25 +37,26 @@ export const newChallengeRateLimiter = async (
 	if (!siteKey) {
 		return errorResponse(c, "Missing query parameters.", 400);
 	}
-	const userID = await db.select().from(sitesTable).where(eq(sitesTable.siteKey, siteKey));
-	if (userID.length === 0) {
+	const site = await db.select().from(sitesTable).where(eq(sitesTable.siteKey, siteKey));
+	if (site.length === 0) {
 		return errorResponse(c, "Given siteKey does not exist.", 404);
 	}
+	const userID = site[0].userID;
 	const identifier = `qps-limit-${userID}`;
 	const { allowed, retryAfter } = await limiter.allowPerSecond(identifier, 50);
 
-	// if (!allowed) {
-	// 	return errorResponse(
-	// 		c,
-	// 		`Too many requests, please retry after ${Math.round(retryAfter)} seconds.`,
-	// 		429
-	// 	);
-	// }
+	if (!allowed) {
+		return errorResponse(
+			c,
+			`Too many requests, please retry after ${Math.round(retryAfter)} seconds.`,
+			429
+		);
+	}
 
-	const quota = await getAndUpdateUserQuota(userID[0].userID);
+	const quota = await getUserQuota(userID);
 	if (quota >= 1000000) {
 		return errorResponse(c, "You have reached your quota for this month.", 429);
 	}
-
+	await redis.incr(`ucaptcha:quota:${userID}`);
 	await next();
 };

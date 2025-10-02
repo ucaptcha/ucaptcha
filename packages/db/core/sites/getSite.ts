@@ -1,32 +1,26 @@
 import { eq } from "drizzle-orm";
-import { sitesTable } from "@/schema";
-import { db } from "@/pg";
-import { redis } from "@/redis";
+import { Site, sitesTable } from "../schema";
+import { db } from "../pg";
+import { redis } from "../redis";
 
-export async function getSiteIDFromKey(siteKey: string) {
-    const cacheKey = `ucaptcha:site_id:${siteKey}`;
-    const cachedData = await redis.get(cacheKey);
-    if (cachedData) {
-        return Number.parseInt(cachedData);
-    }
+export async function getSiteByKey(siteKey: string) {
+	const cacheKey = `ucaptcha:site:key_${siteKey}`;
+	const cachedData = await redis.get(cacheKey);
+	if (cachedData) {
+		return JSON.parse(cachedData) as Site;
+	}
 	const result = await db.select().from(sitesTable).where(eq(sitesTable.siteKey, siteKey));
-    if (result.length === 0) {
-        return null;
-    }
-    await redis.set(cacheKey, result[0].id);
-	return result[0].id;
+	if (result.length === 0) {
+		return null;
+	}
+	await redis.set(cacheKey, JSON.stringify(result[0]));
+	return result[0];
 }
 
-export async function getUserIDFromSiteID(siteID: number) {
-    const cacheKey = `ucaptcha:site_id_user:${siteID}`;
-    const cachedData = await redis.get(cacheKey);
-    if (cachedData) {
-        return Number.parseInt(cachedData);
-    }
-    const result = await db.select({ userID: sitesTable.userID }).from(sitesTable).where(eq(sitesTable.id, siteID));
-    if (result.length === 0) {
-        return null;
-    }
-    await redis.set(cacheKey, result[0].userID);
-    return result[0].userID;
-}
+export const getSiteIDFromKey = async (siteKey: string) => {
+	const result = await getSiteByKey(siteKey);
+	if (result === null) {
+		return null;
+	}
+	return result.id;
+};

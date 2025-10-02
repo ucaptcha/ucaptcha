@@ -15,11 +15,13 @@ import {
 	getSolvedChallengesInLastMonthByUser,
 	getChallengesGeneratedInLastMonthByUser
 } from "@db/challenges/stats";
+import { settingsManager } from "@db/settings";
 
 export default async function Home() {
 	const cookieStore = await cookies();
 	const authToken = cookieStore.get("auth_token")!.value;
 	const { payload } = await verifyAuthToken(authToken!);
+	const hasQuota = (await settingsManager.get("monthlyQuota")) > 0;
 	const quota = await getUserQuota(payload?.userID!, false);
 	const solved = await getSolvedChallengesInLastMonthByUser(payload?.userID!);
 	const generated = await getChallengesGeneratedInLastMonthByUser(payload?.userID!);
@@ -28,18 +30,7 @@ export default async function Home() {
 		<div className="font-sans">
 			<Typography.H1 className="mt-4 ml-1">Dashboard</Typography.H1>
 			<div className="mt-4 grid grid-cols-1 max-lg:gap-6 xl:grid-cols-2 gap-6">
-				<Card className="gap-2">
-					<CardHeader>
-						<CardTitle className="text-2xl">Quota</CardTitle>
-						<CardDescription>
-							To prevent abuse and ensure fair usage, each account has a monthly quota
-							of <b>1,000,000 new challenges</b>.
-						</CardDescription>
-					</CardHeader>
-					<CardContent>
-						<Quota quota={quota} uid={payload?.userID!} />
-					</CardContent>
-				</Card>
+				{hasQuota && <Quota quota={quota} uid={payload?.userID!} />}
 				<div className="grid grid-cols-2 gap-6">
 					<Card>
 						<CardHeader>

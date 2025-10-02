@@ -1,7 +1,7 @@
-import { redis } from "@/redis";
-import { db } from "@/pg";
+import { redis } from "../redis";
+import { db } from "../pg";
 import { eq, and } from "drizzle-orm";
-import { difficultyConfigTable } from "@/schema";
+import { difficultyConfigTable } from "../schema";
 
 interface DifficultyConfig {
 	default: number;
@@ -34,9 +34,8 @@ export async function getDifficultyConfig(siteID: number, resourceID: number): P
 	};
 	const siteIDEq = eq(difficultyConfigTable.siteID, siteID);
 	const resourceIDEq = eq(difficultyConfigTable.resourceID, resourceID);
-	if (resourceID) {
-		data = await db.select(selection).from(difficultyConfigTable).where(and(siteIDEq, resourceIDEq));
-	} else {
+	data = await db.select(selection).from(difficultyConfigTable).where(and(siteIDEq, resourceIDEq));
+	if (!data[0]) {
 		data = await db.select(selection).from(difficultyConfigTable).where(siteIDEq);
 	}
 	if (!data[0]) {

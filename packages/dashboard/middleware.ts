@@ -2,8 +2,7 @@ import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
 import { verifyAuthToken } from "@/lib/auth/jwt";
 
-const protectedRoutes = ["/playground", "/"];
-const publicRoutes = ["/api/auth"];
+const publicRoutes = ["/", "/api/auth"];
 
 export async function middleware(request: NextRequest) {
 	const { pathname, searchParams } = request.nextUrl;
@@ -11,12 +10,6 @@ export async function middleware(request: NextRequest) {
 	const isPublicRoute = publicRoutes.some((route) => pathname.startsWith(route));
 
 	if (isPublicRoute) {
-		return NextResponse.next();
-	}
-
-	const isProtectedRoute = protectedRoutes.some((route) => pathname.startsWith(route));
-
-	if (!isProtectedRoute) {
 		return NextResponse.next();
 	}
 

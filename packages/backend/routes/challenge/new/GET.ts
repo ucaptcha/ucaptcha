@@ -1,6 +1,6 @@
 import { getDifficultyConfig } from "@db/difficulty/getDifficulty";
 import { getResourceID } from "@db/resources/getResource";
-import { getSiteIDFromKey, getUserIDFromSiteID } from "@db/sites/getSite";
+import { getSiteByKey, getSiteIDFromKey } from "@db/sites/getSite";
 import { Context } from "hono";
 import { redis } from "@db/redis";
 import { errorResponse } from "@/lib/common.ts";
@@ -16,12 +16,13 @@ export const getNewChallenge = async (c: Context) => {
 	}
 	const siteKey = params.siteKey;
 	const resource = params.resource;
+	const site = await getSiteByKey(siteKey);
 	const siteID = await getSiteIDFromKey(siteKey);
 	const resourceID = await getResourceID(siteKey, resource);
 	if (!siteID || !resourceID) {
 		return errorResponse(c, "Given siteKey or resource does not exist.", 404);
 	}
-	const userID = await getUserIDFromSiteID(siteID);
+	const userID = site.userID;
 	const difficultyConfig = await getDifficultyConfig(siteID, resourceID);
 	const difficulty = difficultyConfig.default;
 	const challenge = await generateChallenge(difficulty, userID, siteKey, resource);

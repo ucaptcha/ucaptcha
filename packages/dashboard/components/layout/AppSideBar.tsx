@@ -11,10 +11,15 @@ import {
 	SidebarMenuItem
 } from "@/components/ui/sidebar";
 import { verifyAuthToken } from "@/lib/auth/jwt";
-import { ShieldCheck, FlaskConical, Gauge } from "lucide-react";
-import { cookies } from 'next/headers'
+import { ShieldCheck, FileText, FlaskConical, Gauge, Globe, User } from "lucide-react";
+import { cookies } from "next/headers";
 
 export async function AppSidebar() {
+	const cookieStore = await cookies();
+	const token = cookieStore.get("auth_token");
+	const { payload } = await verifyAuthToken(token!.value);
+	const isAdmin = payload?.role === "admin";
+
 	return (
 		<Sidebar collapsible="offcanvas" variant="inset">
 			<SidebarHeader className="flex flex-col gap-2 p-2">
@@ -53,6 +58,54 @@ export async function AppSidebar() {
 						</SidebarMenu>
 					</SidebarGroupContent>
 				</SidebarGroup>
+				<SidebarGroup>
+					<SidebarGroupLabel>Sites</SidebarGroupLabel>
+					<SidebarGroupContent>
+						<SidebarMenu>
+							<SidebarMenuItem key="sites">
+								<SidebarMenuButton asChild>
+									<a href="/">
+										<Globe />
+										<span>Sites</span>
+									</a>
+								</SidebarMenuButton>
+							</SidebarMenuItem>
+							<SidebarMenuItem key="resources">
+								<SidebarMenuButton asChild>
+									<a href="/playground">
+										<FileText />
+										<span>Resources</span>
+									</a>
+								</SidebarMenuButton>
+							</SidebarMenuItem>
+						</SidebarMenu>
+					</SidebarGroupContent>
+				</SidebarGroup>
+				{isAdmin && (
+					<SidebarGroup>
+						<SidebarGroupLabel>Admin</SidebarGroupLabel>
+						<SidebarGroupContent>
+							<SidebarMenu>
+								<SidebarMenuItem key="sites">
+									<SidebarMenuButton asChild>
+										<a href="/admin/users">
+											<User />
+											<span>Users</span>
+										</a>
+									</SidebarMenuButton>
+								</SidebarMenuItem>
+								<SidebarMenuItem key="resources">
+									<SidebarMenuButton asChild>
+										<a href="/playground">
+											<FileText />
+											<span>Resources</span>
+										</a>
+									</SidebarMenuButton>
+								</SidebarMenuItem>
+							</SidebarMenu>
+						</SidebarGroupContent>
+					</SidebarGroup>
+				)}
 			</SidebarContent>
 			<SidebarFooter />
 		</Sidebar>

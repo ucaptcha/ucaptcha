@@ -1,7 +1,7 @@
 import { eq, and } from "drizzle-orm";
-import { resourcesTable, sitesTable } from "@/schema";
-import { db } from "@/pg";
-import { redis } from "@/redis";
+import { resourcesTable, sitesTable } from "../schema";
+import { db } from "../pg";
+import { redis } from "../redis";
 
 export async function getResourceID(siteKey: string, name: string) {
     const cacheKey = `ucaptcha:resource_id:${siteKey}-${name}`;
