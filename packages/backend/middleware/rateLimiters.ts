@@ -45,13 +45,13 @@ export const newChallengeRateLimiter = async (
 	const identifier = `qps-limit-${userID}`;
 	const { allowed, retryAfter } = await limiter.allowPerSecond(identifier, 50);
 
-	if (!allowed) {
-		return errorResponse(
-			c,
-			`Too many requests, please retry after ${Math.round(retryAfter)} seconds.`,
-			429
-		);
-	}
+	// if (!allowed) {
+	// 	return errorResponse(
+	// 		c,
+	// 		`Too many requests, please retry after ${Math.round(retryAfter)} seconds.`,
+	// 		429
+	// 	);
+	// }
 
 	const quota = await getAndUpdateUserQuota(userID[0].userID);
 	if (quota >= 1000000) {

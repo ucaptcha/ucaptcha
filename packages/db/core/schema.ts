@@ -1,4 +1,4 @@
-import { foreignKey, integer, pgEnum, pgTable, text, timestamp, boolean } from "drizzle-orm/pg-core";
+import { foreignKey, integer, pgEnum, pgTable, text, timestamp, boolean, index } from "drizzle-orm/pg-core";
 import { InferSelectModel } from 'drizzle-orm';
 
 export const userRoleEnum = pgEnum('user_role', ['user', 'admin']);
@@ -60,9 +60,11 @@ export const challengesLogTable = pgTable(
 	{
 		id: integer().primaryKey().generatedAlwaysAsIdentity(),
 		challengeID: text().notNull(),
+		userID: integer().notNull(),
 		siteID: integer().notNull(),
 		resourceID: integer().notNull(),
 		ttl: integer().notNull(),
+		difficulty: integer().notNull(),
 		correctlyAnswered: boolean().notNull().default(false),
 		createdAt: timestamp({ withTimezone: true }).defaultNow().notNull(),
 		answeredAt: timestamp({ withTimezone: true })
@@ -79,7 +81,15 @@ export const challengesLogTable = pgTable(
 			foreignColumns: [resourcesTable.id]
 		})
 			.onUpdate("cascade")
-			.onDelete("cascade")
+			.onDelete("cascade"),
+		foreignKey({
+			columns: [table.userID],
+			foreignColumns: [usersTable.id]
+		})
+			.onUpdate("cascade")
+			.onDelete("cascade"),
+		index("idx_log_created-at_uid").on(table.createdAt, table.userID),
+		index("idx_log_uid").on(table.userID)
 	]
 );
 

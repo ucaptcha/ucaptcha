@@ -16,6 +16,9 @@ export const answerChallenge = async (c: Context<null, "/challenge/:id/answer", 
 	if (!challenge) {
 		return errorResponse(c, "Challenge not found.", 404);
 	}
+	if (challenge.status === "failed" || challenge.status === "solved") {
+		return errorResponse(c, "Challenge has already been answered.", 400);
+	}
 	if (challenge.status === "used") {
 		return errorResponse(c, "Challenge is invalid.", 400);
 	}

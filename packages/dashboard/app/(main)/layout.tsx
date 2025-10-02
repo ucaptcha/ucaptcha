@@ -30,7 +30,7 @@ export default function RootLayout({
 					<AppSidebar />
 					<SidebarInset>
 						<SidebarTrigger className="absolute top-2 left-2" />
-							<main className="px-4 lg:px-8 w-full pt-4 lg:pt-8 2xl:px-20">
+							<main className="px-4 lg:px-8 w-full pt-8 lg:pt-12 2xl:px-20">
 								{children}
 							</main>
 					</SidebarInset>

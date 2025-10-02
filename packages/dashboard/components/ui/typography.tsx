@@ -3,7 +3,7 @@ import { tv } from "tailwind-variants";
 const tg = tv({
 	slots: {
 		h1: "scroll-m-20 text-4xl font-extrabold tracking-tight text-balance",
-		h2: "scroll-m-20 pb-2 text-3xl font-semibold tracking-tight",
+		h2: "scroll-m-20 text-3xl font-semibold tracking-tight",
 		p: "leading-7"
 	},
 });

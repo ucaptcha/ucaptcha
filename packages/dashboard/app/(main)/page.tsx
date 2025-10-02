@@ -1,24 +1,73 @@
 import { Typography } from "@/components/ui/typography";
 import {
 	Card,
-	CardAction,
 	CardContent,
 	CardDescription,
 	CardFooter,
 	CardHeader,
 	CardTitle
 } from "@/components/ui/card";
+import { getUserQuota } from "@db/quota";
+import { cookies } from "next/headers";
+import { verifyAuthToken } from "@/lib/auth/jwt";
+import { Quota } from "@/components/Dashboard";
+import {
+	getSolvedChallengesInLastMonthByUser,
+	getChallengesGeneratedInLastMonthByUser
+} from "@db/challenges/stats";
 
-export default function Home() {
+export default async function Home() {
+	const cookieStore = await cookies();
+	const authToken = cookieStore.get("auth_token")!.value;
+	const { payload } = await verifyAuthToken(authToken!);
+	const quota = await getUserQuota(payload?.userID!, false);
+	const solved = await getSolvedChallengesInLastMonthByUser(payload?.userID!);
+	const generated = await getChallengesGeneratedInLastMonthByUser(payload?.userID!);
+
 	return (
 		<div className="font-sans">
 			<Typography.H1 className="mt-4 ml-1">Dashboard</Typography.H1>
-			<div className="grid grid-cols-1 max-lg:gap-6 lg:grid-cols-2 ">
-				<Card>
+			<div className="mt-4 grid grid-cols-1 max-lg:gap-6 xl:grid-cols-2 gap-6">
+				<Card className="gap-2">
 					<CardHeader>
-						<CardTitle>Quota</CardTitle>
+						<CardTitle className="text-2xl">Quota</CardTitle>
+						<CardDescription>
+							To prevent abuse and ensure fair usage, each account has a monthly quota
+							of <b>1,000,000 new challenges</b>.
+						</CardDescription>
 					</CardHeader>
+					<CardContent>
+						<Quota quota={quota} uid={payload?.userID!} />
+					</CardContent>
 				</Card>
+				<div className="grid grid-cols-2 gap-6">
+					<Card>
+						<CardHeader>
+							<CardDescription>Challenges Solved</CardDescription>
+							<CardTitle className="text-2xl tabular-nums">
+								{solved.toLocaleString("en-US")}
+							</CardTitle>
+						</CardHeader>
+						<CardFooter className="flex-col items-start gap-1.5 text-sm">
+							<div className="text-muted-foreground">
+								The challenges that have been correctly solve in the past 30 days.
+							</div>
+						</CardFooter>
+					</Card>
+					<Card>
+						<CardHeader>
+							<CardDescription>Challenges Generated</CardDescription>
+							<CardTitle className="text-2xl tabular-nums">
+								{generated.toLocaleString("en-US")}
+							</CardTitle>
+						</CardHeader>
+						<CardFooter className="flex-col items-start gap-1.5 text-sm">
+							<div className="text-muted-foreground">
+								The challenges generated in the past 30 days.
+							</div>
+						</CardFooter>
+					</Card>
+				</div>
 			</div>
 		</div>
 	);

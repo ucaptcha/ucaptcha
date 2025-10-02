@@ -35,6 +35,8 @@ export const getNewChallenge = async (c: Context) => {
 		siteID: siteID,
 		resourceID: resourceID,
 		ttl: KEY_TTL,
+		difficulty: difficulty,
+		userID: userID
 	});
 
 	return c.json({

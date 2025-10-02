@@ -15,9 +15,6 @@ import { ShieldCheck, FlaskConical, Gauge } from "lucide-react";
 import { cookies } from 'next/headers'
 
 export async function AppSidebar() {
-	const cookieStore = await cookies()
-	const authToken = cookieStore.get('auth_token')!.value
-	const { payload } = await verifyAuthToken(authToken!);
 	return (
 		<Sidebar collapsible="offcanvas" variant="inset">
 			<SidebarHeader className="flex flex-col gap-2 p-2">

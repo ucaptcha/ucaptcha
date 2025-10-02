@@ -19,6 +19,7 @@
 		"typescript": "^5"
 	},
 	"dependencies": {
+		"@number-flow/react": "^0.5.10",
 		"jose": "^6.1.0"
 	}
 }
