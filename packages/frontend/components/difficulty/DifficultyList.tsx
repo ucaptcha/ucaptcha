@@ -81,7 +81,7 @@ export function DifficultyList({
 							<div className="space-y-4">
 								<div className="grid lg:grid-cols-2 xl:grid-cols-3 gap-4">
 									{/* Default Configuration */}
-									{defaultConfig && (
+									{defaultConfig && defaultConfig.difficultyConfig && (
 										<Card className="gap-0">
 											<CardHeader>
 												<div className="flex justify-between items-start">
@@ -124,49 +124,54 @@ export function DifficultyList({
 											</CardContent>
 										</Card>
 									)}
-									{resourceConfigs.map((config) => (
-										<Card key={config.id} className="gap-0">
-											<CardHeader>
-												<div className="flex justify-between items-start">
-													<div>
-														<CardTitle>
-															{config.resourceName ||
-																`Resource ${config.resourceID}`}
-														</CardTitle>
+									{resourceConfigs.map((config) => {
+										if (!config.difficultyConfig) {
+											return <></>;
+										}
+										return (
+											<Card key={config.id} className="gap-0">
+												<CardHeader>
+													<div className="flex justify-between items-start">
+														<div>
+															<CardTitle>
+																{config.resourceName ||
+																	`Resource ${config.resourceID}`}
+															</CardTitle>
+														</div>
+														<div className="flex gap-2">
+															<Button
+																variant="outline"
+																size="sm"
+																onClick={() => onEdit(config)}
+															>
+																<Edit className="w-4 h-4" />
+															</Button>
+															<Button
+																variant="outline"
+																size="sm"
+																onClick={() => onDelete(config)}
+															>
+																<Trash2 className="w-4 h-4" />
+															</Button>
+														</div>
 													</div>
-													<div className="flex gap-2">
-														<Button
-															variant="outline"
-															size="sm"
-															onClick={() => onEdit(config)}
-														>
-															<Edit className="w-4 h-4" />
-														</Button>
-														<Button
-															variant="outline"
-															size="sm"
-															onClick={() => onDelete(config)}
-														>
-															<Trash2 className="w-4 h-4" />
-														</Button>
+												</CardHeader>
+												<CardContent>
+													<div className="space-y-2">
+														<div>
+															<strong>Default Difficulty:</strong>{" "}
+															{config.difficultyConfig.default}
+														</div>
+														<div>
+															<strong>Custom Rules:</strong>{" "}
+															{config.difficultyConfig.custom.length}{" "}
+															rules
+														</div>
 													</div>
-												</div>
-											</CardHeader>
-											<CardContent>
-												<div className="space-y-2">
-													<div>
-														<strong>Default Difficulty:</strong>{" "}
-														{config.difficultyConfig.default}
-													</div>
-													<div>
-														<strong>Custom Rules:</strong>{" "}
-														{config.difficultyConfig.custom.length}{" "}
-														rules
-													</div>
-												</div>
-											</CardContent>
-										</Card>
-									))}
+												</CardContent>
+											</Card>
+										);
+									})}
 								</div>
 							</div>
 						</div>

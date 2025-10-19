@@ -1,6 +1,6 @@
 import { Context } from "hono";
 import { redis } from "@db/redis";
-import { errorResponse } from "@/lib/common.ts";
+import { errorResponse } from "@/lib/common";
 import { getChallengeByID, updateChallengeStatus, verifyChallenge } from "@/lib/challenge";
 import { sign } from "hono/jwt";
 import { getJWTSecretForUser } from "@db/jwt/getSecret";

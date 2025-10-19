@@ -19,6 +19,7 @@
 		"typescript": "^5"
 	},
 	"dependencies": {
+		"@alikia/random-key": "^1.1.1",
 		"@number-flow/react": "^0.5.10",
 		"jose": "^6.1.0"
 	}

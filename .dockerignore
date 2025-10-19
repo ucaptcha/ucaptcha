@@ -33,6 +33,10 @@ report.[0-9]_.[0-9]_.[0-9]_.[0-9]_.json
 # Finder (MacOS) folder config
 .DS_Store
 
-data
+.next
+*.tsbuildinfo
+next-env.d.ts
 
-docker-compose.yml
+packages/wasm/target
+
+data/

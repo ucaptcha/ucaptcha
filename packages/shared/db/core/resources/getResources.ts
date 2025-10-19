@@ -1,7 +1,7 @@
 import { and, eq } from "drizzle-orm";
 import { resourcesTable, sitesTable } from "../schema";
 import { db } from "../pg";
-import { redis } from "@db/redis.ts";
+import { redis } from "@db/redis";
 
 export async function getResources(userID: number, siteID?: number) {
 	const whereCond = siteID

@@ -8,9 +8,10 @@
 		"studio": "drizzle-kit studio"
 	},
 	"dependencies": {
+		"@alikia/random-key": "^1.1.1",
+		"drizzle-orm": "^0.44.4",
 		"ioredis": "^5.6.1",
-		"postgres": "^3.4.5",
-		"drizzle-orm": "^0.44.4"
+		"postgres": "^3.4.5"
 	},
 	"devDependencies": {
 		"@types/bun": "^1.2.11",

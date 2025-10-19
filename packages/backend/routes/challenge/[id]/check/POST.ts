@@ -1,5 +1,5 @@
 import { Context } from "hono";
-import { errorResponse } from "@/lib/common.ts";
+import { errorResponse } from "@/lib/common";
 import { getChallengeByID, updateChallengeStatus } from "@/lib/challenge";
 
 export const checkChallenge = async (c: Context<null, "/challenge/:id/check", null>) => {

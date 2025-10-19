@@ -2,7 +2,7 @@ import { getDifficultyConfig } from "@db/difficulty/getDifficulty";
 import { getSiteByKey, getSiteIDFromKey } from "@db/sites/getSite";
 import { Context } from "hono";
 import { redis } from "@db/redis";
-import { errorResponse } from "@/lib/common.ts";
+import { errorResponse } from "@/lib/common";
 import { challengeKey, generateChallenge } from "@/lib/challenge";
 import { KEY_TTL } from "@/lib/keys";
 import { db } from "@db/pg";

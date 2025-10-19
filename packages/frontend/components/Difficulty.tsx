@@ -178,6 +178,7 @@ export default function Difficulty({
 				selectedSiteName={sites.find((site) => site.id === selectedSiteId)?.name}
 				onEdit={(config) => {
 					setEditingDifficulty(config);
+					if (!config.difficultyConfig) return;
 					setNewDefaultDifficulty(config.difficultyConfig.default.toString());
 					setCustomRules(config.difficultyConfig.custom);
 				}}

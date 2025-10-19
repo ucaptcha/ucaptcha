@@ -1,6 +1,6 @@
 import { Context, Hono, Next } from "hono";
-import { errorResponse } from "@/lib/common.ts";
-import { JWTData, verifyAuthToken } from "@shared/auth/jwt.ts";
+import { errorResponse } from "@/lib/common";
+import { JWTData, verifyAuthToken } from "@shared/auth/jwt";
 import { JWTPayload } from "jose";
 
 export interface AuthStore {

@@ -1,8 +1,8 @@
 import { eq } from "drizzle-orm";
 import { Resource, resourcesTable } from "../schema";
 import { db } from "../pg";
-import { redis } from "@db/redis.ts";
-import { getSiteFromID } from "@db/sites/getSite.ts";
+import { redis } from "@db/redis";
+import { getSiteFromID } from "@db/sites/getSite";
 
 export async function updateResource(id: number, data: Partial<Resource>) {
 	const [resource] = await db
@@ -11,7 +11,11 @@ export async function updateResource(id: number, data: Partial<Resource>) {
 		.where(eq(resourcesTable.id, id))
 		.returning();
 
-	const { siteKey } = await getSiteFromID(resource.siteID);
+	const s = await getSiteFromID(resource.siteID);
+	if (!s) {
+		return null;
+	}
+	const { siteKey } = s;
 	const cacheKey = `ucaptcha:resource_id:${siteKey}-${resource.name}`;
 	await redis.set(cacheKey, JSON.stringify(data));
 

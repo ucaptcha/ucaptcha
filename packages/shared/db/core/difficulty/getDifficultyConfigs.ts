@@ -1,22 +1,9 @@
 import { db } from "@db/pg";
-import { difficultyConfigTable, sitesTable, resourcesTable } from "@db/schema";
-import { eq, and, isNull } from "drizzle-orm";
+import { difficultyConfigTable, sitesTable, resourcesTable, DifficultyConfig } from "@db/schema";
+import { eq, and } from "drizzle-orm";
 
-export interface DifficultyConfigWithRelations {
-	id: number;
-	siteID: number;
-	resourceID: number | null;
-	difficultyConfig: {
-		default: number;
-		custom: {
-			timeRange: number;
-			threshold: number;
-			difficulty: number;
-		}[];
-	};
-	createdAt: Date;
-	updatedAt: Date;
-	siteName: string;
+export type DifficultyConfigWithRelations = DifficultyConfig & {
+	siteName: string | null;
 	resourceName: string | null;
 }
 

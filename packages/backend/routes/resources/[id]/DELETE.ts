@@ -37,7 +37,10 @@ export async function deleteResourceHandler(c: Context<{ Variables: AuthStore }>
 			return errorResponse(c, "Access denied", 403);
 		}
 
-		await deleteResource(resourceId);
+		const r = await deleteResource(resourceId);
+		if (!r) {
+			return errorResponse(c, "Failed to delete resource", 500);
+		}
 
 		return c.json({ message: "Resource deleted successfully" });
 	} catch (error) {

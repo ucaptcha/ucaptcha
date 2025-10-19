@@ -1,0 +1,32 @@
+FROM oven/bun:1.2.19-alpine AS base
+
+WORKDIR /app
+
+# Install dependencies
+FROM base AS deps
+COPY . .
+RUN bun install --frozen-lockfile
+
+# Build stage
+FROM base AS builder
+COPY --from=deps /app/node_modules ./node_modules
+COPY . .
+
+# Build the backend
+RUN bun build --compile packages/backend/src/main.ts --outfile /app/dist/backend
+
+# Production stage
+FROM oven/bun:1.2.0-alpine AS runner
+WORKDIR /app
+
+COPY --from=builder /app/dist/backend ./backend
+COPY --from=builder /app/packages/backend ./packages/backend
+COPY --from=builder /app/packages/shared ./packages/shared
+
+EXPOSE 8732
+
+ENV NODE_ENV=production
+ENV HOST=0.0.0.0
+ENV PORT=8732
+
+CMD ["./backend"]

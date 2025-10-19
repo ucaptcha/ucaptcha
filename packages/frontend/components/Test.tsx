@@ -1,7 +1,7 @@
 "use client";
 
-import { compute_vdf } from "ucaptcha-vdf-wasm";
-import rust_wasm_init from "ucaptcha-vdf-wasm";
+import { compute_vdf } from "@alikia/ucaptcha-vdf-solver-wasm";
+import rust_wasm_init from "@alikia/ucaptcha-vdf-solver-wasm";
 import { computeVDF, generateRSAKey, generateValidG, verifyVDF } from "@core/index";
 import { Button } from "@/components/ui/button";
 

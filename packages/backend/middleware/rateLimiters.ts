@@ -2,10 +2,10 @@ import type { BlankEnv } from "hono/types";
 import { Context, Next } from "hono";
 import { RateLimiter } from "@koshnic/ratelimit";
 import { redis } from "@db/redis";
-import { db } from "@db/pg.ts";
-import { challengesLogTable, sitesTable, usersTable } from "@db/schema.ts";
+import { db } from "@db/pg";
+import { challengesLogTable, sitesTable, usersTable } from "@db/schema";
 import { eq, count, gte, and } from "drizzle-orm";
-import { errorResponse } from "@/lib/common.ts";
+import { errorResponse } from "@/lib/common";
 
 export const getUserQuota = async (uid: number) => {
 	const cacheKey = `ucaptcha:quota:${uid}`;
