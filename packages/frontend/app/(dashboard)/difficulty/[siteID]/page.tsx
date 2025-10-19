@@ -1,13 +1,14 @@
 import { cookies } from "next/headers";
-import { getResourcesData } from "../actions";
-import Resources from "@/components/Resources";
+import { getDifficultyData } from "../actions";
+import Difficulty from "@/components/Difficulty";
 import { verifyAuthToken } from "@shared/auth/jwt";
+import { notFound } from "next/navigation";
 
-interface ResourcesPageProps {
+interface DifficultyPageProps {
 	params: Promise<{ siteID?: string[] }>;
 }
 
-export default async function ResourcesPage({ params }: ResourcesPageProps) {
+export default async function DifficultyPage({ params }: DifficultyPageProps) {
 	const { siteID } = await params;
 	const cookieStore = await cookies();
 	const token = cookieStore.get("auth_token");
@@ -25,18 +26,23 @@ export default async function ResourcesPage({ params }: ResourcesPageProps) {
 	const parsedSiteId = siteID && siteID.length > 0 ? parseInt(siteID[0]) : undefined;
 
 	// Fetch data using Server Action
-	const { resources, sites } = await getResourcesData(payload.userID, parsedSiteId);
+	const { difficultyConfigs, sites, resources } = await getDifficultyData(payload.userID, parsedSiteId);
 
-	// Filter resources by site ID if specified
-	const filteredResources = parsedSiteId
-		? resources.filter(resource => resource.siteID === parsedSiteId)
-		: resources;
+	// Filter difficulty configs by site ID if specified
+	const filteredDifficultyConfigs = parsedSiteId
+		? difficultyConfigs.filter(config => config.siteID === parsedSiteId)
+		: difficultyConfigs;
+
+	if (filteredDifficultyConfigs.length === 0) {
+		notFound();
+	}
 
 	return (
 		<div className="container mx-auto py-6">
-			<Resources
-				resources={filteredResources}
+			<Difficulty
+				difficultyConfigs={filteredDifficultyConfigs}
 				sites={sites}
+				resources={resources}
 				selectedSiteId={parsedSiteId}
 				userID={payload.userID}
 			/>

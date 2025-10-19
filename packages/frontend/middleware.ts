@@ -2,7 +2,7 @@ import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
 import { verifyAuthToken } from "@shared/auth/jwt";
 
-const protectedRoutes = ["/playground", "/dashboard", "/admin", "/resources"];
+const protectedRoutes = ["/playground", "/dashboard", "/admin", "/resources", "/difficulty"];
 const publicRoutes = ["/", "/api/auth"];
 
 export async function middleware(request: NextRequest) {

@@ -3,7 +3,17 @@
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Typography } from "@/components/ui/typography";
-import { Shield, Zap, Users, Lock, ArrowRight, CheckCircle, Sparkles, Code,CircleDollarSign } from "lucide-react";
+import {
+	Shield,
+	Zap,
+	Users,
+	Lock,
+	ArrowRight,
+	CheckCircle,
+	Sparkles,
+	Code,
+	CircleDollarSign
+} from "lucide-react";
 import Link from "next/link";
 
 export default function LandingPage() {
@@ -55,7 +65,7 @@ export default function LandingPage() {
 
 						<Typography.H1 className="text-5xl lg:text-7xl font-bold tracking-tight">
 							μCaptcha
-							<span className="block text-4xl lg:text-6xl text-muted-foreground mt-2">
+							<span className="block text-3xl sm:text-4xl lg:text-6xl text-muted-foreground mt-2">
 								User-Friendly CAPTCHA Made Powerful
 							</span>
 						</Typography.H1>
@@ -94,7 +104,7 @@ export default function LandingPage() {
 			<section className="py-20 bg-background">
 				<div className="container mx-auto px-4">
 					<div className="text-center space-y-4 mb-16">
-						<Typography.H2 className="text-4xl font-bold">
+						<Typography.H2 className="text-3xl sm:text-4xl font-bold">
 							Why Choose μCaptcha?
 						</Typography.H2>
 						<Typography.P className="text-xl text-muted-foreground max-w-2xl mx-auto">
@@ -132,7 +142,7 @@ export default function LandingPage() {
 				<div className="container mx-auto px-4 lg:px-20">
 					<div className="grid grid-cols-1 lg:grid-cols-2 xl:[grid-template-columns:8fr_1fr_5fr] gap-12 items-center">
 						<div className="space-y-6">
-							<Typography.H2 className="text-4xl font-bold">
+							<Typography.H2 className="text-3xl sm:text-4xl font-bold">
 								Everything You Need to Secure Your Platform
 							</Typography.H2>
 							<Typography.P className="text-xl text-muted-foreground">
@@ -149,7 +159,7 @@ export default function LandingPage() {
 								))}
 							</div>
 						</div>
-                        <div className="hidden xl:block"/>
+						<div className="hidden xl:block" />
 
 						<div className="relative">
 							<Card className="p-8 border-2">
@@ -161,8 +171,8 @@ export default function LandingPage() {
 										Join thousands of developers securing their applications
 									</CardDescription>
 								</CardHeader>
-								<CardContent className="space-y-4">
-									<Button size="lg" className="w-full text-lg py-6" asChild>
+								<CardContent className="space-y-4 px-2">
+									<Button size="lg" className="w-full text-lg py-6 px-5" asChild>
 										<Link href="/dashboard">
 											Start Protecting Your App
 											<ArrowRight className="h-5 w-5" />
@@ -177,43 +187,41 @@ export default function LandingPage() {
 
 			{/* CTA Section */}
 			<section className="py-20 bg-background">
-				<div className="container mx-auto px-4 text-center">
-					<Card className="max-w-4xl mx-auto bg-gradient-to-r from-primary/10 to-primary/5 border-primary/20">
-						<CardContent className="p-12">
-							<Typography.H2 className="text-4xl font-bold mb-4">
-								Start Securing Your Applications Today
-							</Typography.H2>
-							<Typography.P className="text-xl text-muted-foreground mb-8 max-w-2xl mx-auto">
-								Get started with μCaptcha and experience the difference in security
-								and user experience.
-							</Typography.P>
-							<div className="flex flex-col sm:flex-row gap-4 justify-center">
-								<Button size="lg" className="text-lg px-8 py-6" asChild>
-									<Link href="/dashboard">
-										Get Started for Free
-										<ArrowRight className="h-5 w-5" />
-									</Link>
-								</Button>
-								<Button
-									size="lg"
-									variant="outline"
-									className="text-lg px-8 py-6"
-									asChild
-								>
-									<Link href="/playground">View Documentation</Link>
-								</Button>
-							</div>
-						</CardContent>
-					</Card>
+				<div className="container mx-auto sm:px-4 sm:text-center">
+					<div className="p-4 md:p-12">
+						<Typography.H2 className="text-3xl sm:text-4xl font-bold mb-4">
+							Start Securing Your Applications Today
+						</Typography.H2>
+						<Typography.P className="text-xl text-muted-foreground mb-8 max-w-2xl mx-auto">
+							Get started with μCaptcha and experience the difference in security and
+							user experience.
+						</Typography.P>
+						<div className="flex flex-col sm:flex-row gap-4 justify-center">
+							<Button size="lg" className="text-lg px-8 py-6" asChild>
+								<Link href="/dashboard">
+									Get Started for Free
+									<ArrowRight className="h-5 w-5" />
+								</Link>
+							</Button>
+							<Button
+								size="lg"
+								variant="outline"
+								className="text-lg px-8 py-6"
+								asChild
+							>
+								<Link href="/playground">View Documentation</Link>
+							</Button>
+						</div>
+					</div>
 				</div>
 			</section>
 
 			{/* Footer */}
 			<footer className="py-8 border-t">
 				<div className="container mx-auto px-4 text-center">
-                    <Typography.P className="text-muted-foreground">
-                        Released under the Apache 2.0 License.
-                    </Typography.P>
+					<Typography.P className="text-muted-foreground">
+						Released under the Apache 2.0 License.
+					</Typography.P>
 					<Typography.P className="text-muted-foreground">
 						© 2025 alikia2x. Built with modern technology for a safer web.
 					</Typography.P>

@@ -31,8 +31,8 @@ export default async function Home() {
 			<Typography.H1 className="mt-4 ml-1">Dashboard</Typography.H1>
 			<div className="mt-4 grid grid-cols-1 max-lg:gap-6 xl:grid-cols-2 gap-6">
 				{hasQuota && <Quota quota={quota} uid={payload?.userID!} />}
-				<div className="grid grid-cols-2 gap-6">
-					<Card>
+				<div className="grid sm:grid-cols-2 gap-6">
+					<Card className="gap-3">
 						<CardHeader>
 							<CardDescription>Challenges Solved</CardDescription>
 							<CardTitle className="text-2xl tabular-nums">
@@ -45,7 +45,7 @@ export default async function Home() {
 							</div>
 						</CardFooter>
 					</Card>
-					<Card>
+					<Card className="gap-3">
 						<CardHeader>
 							<CardDescription>Challenges Generated</CardDescription>
 							<CardTitle className="text-2xl tabular-nums">

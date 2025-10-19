@@ -114,7 +114,7 @@ export default function Resources({ resources, sites, selectedSiteId, userID }: 
 	return (
 		<div className="font-sans">
 			<div className="flex justify-between items-center">
-				<h1 className="text-3xl font-bold mt-4 ml-1">Resources</h1>
+				<h1 className="text-3xl font-bold mt-4">Resources</h1>
 				<Button onClick={() => setShowCreateForm(true)} disabled={isLoading}>
 					<Plus className="w-4 h-4 mr-2" />
 					Add Resource

@@ -4,7 +4,7 @@
 	"version": "0.0.1",
 	"scripts": {
 		"format": "prettier --write .",
-		"dev": "bun run --hot src/main.ts",
+		"dev": "NODE_ENV=development bun run --hot src/main.ts",
 		"start": "bun run src/main.ts"
 	},
 	"dependencies": {

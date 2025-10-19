@@ -1,7 +1,7 @@
 import { Typography } from "@/components/ui/typography";
 import { ApiUrlInput, Generating, Solving, Validating } from "@/components/Playground";
 
-export default function Home() {
+export default async function Home() {
 	return (
 		<div className="font-sans w-full">
 			<Typography.H1 className="my-4 ml-1">Playground</Typography.H1>
