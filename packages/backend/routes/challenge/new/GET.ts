@@ -1,5 +1,4 @@
 import { getDifficultyConfig } from "@db/difficulty/getDifficulty";
-import { getResourceID } from "@db/resources/getResource";
 import { getSiteByKey, getSiteIDFromKey } from "@db/sites/getSite";
 import { Context } from "hono";
 import { redis } from "@db/redis";
@@ -8,6 +7,7 @@ import { challengeKey, generateChallenge } from "@/lib/challenge";
 import { KEY_TTL } from "@/lib/keys";
 import { db } from "@db/pg";
 import { challengesLogTable } from "@db/schema";
+import { getResourceID } from "@db/resources";
 
 export const getNewChallenge = async (c: Context) => {
 	const params = c.req.query();
@@ -23,7 +23,7 @@ export const getNewChallenge = async (c: Context) => {
 		return errorResponse(c, "Given siteKey or resource does not exist.", 404);
 	}
 	const userID = site.userID;
-	const difficultyConfig = await getDifficultyConfig(siteID, resourceID);
+	const { difficultyConfig } = await getDifficultyConfig(siteID, resourceID);
 	const difficulty = difficultyConfig.default;
 	const challenge = await generateChallenge(difficulty, userID, siteKey, resource);
 	if (!challenge) {

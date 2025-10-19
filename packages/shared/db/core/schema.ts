@@ -1,7 +1,26 @@
-import { foreignKey, integer, pgEnum, pgTable, text, timestamp, boolean, index, jsonb } from "drizzle-orm/pg-core";
-import { InferSelectModel } from 'drizzle-orm';
+import {
+	foreignKey,
+	integer,
+	pgEnum,
+	pgTable,
+	text,
+	timestamp,
+	boolean,
+	index,
+	jsonb
+} from "drizzle-orm/pg-core";
+import { InferSelectModel } from "drizzle-orm";
 
-export const userRoleEnum = pgEnum('user_role', ['user', 'admin']);
+export interface DifficultyConfigValue {
+	default: number;
+	custom: {
+		timeRange: number;
+		threshold: number;
+		difficulty: number;
+	}[];
+}
+
+export const userRoleEnum = pgEnum("user_role", ["user", "admin"]);
 
 export const usersTable = pgTable("users", {
 	id: integer().primaryKey().generatedAlwaysAsIdentity(),
@@ -43,13 +62,13 @@ export const resourcesTable = pgTable(
 	{
 		id: integer().primaryKey().generatedAlwaysAsIdentity(),
 		name: text().notNull(),
-		siteId: integer().notNull(),
+		siteID: integer().notNull(),
 		createdAt: timestamp({ withTimezone: true }).defaultNow().notNull(),
 		updatedAt: timestamp({ withTimezone: true }).defaultNow().notNull()
 	},
 	(table) => [
 		foreignKey({
-			columns: [table.siteId],
+			columns: [table.siteID],
 			foreignColumns: [sitesTable.id]
 		})
 			.onUpdate("cascade")
@@ -100,14 +119,11 @@ export const difficultyConfigTable = pgTable(
 	{
 		id: integer().primaryKey().generatedAlwaysAsIdentity(),
 		siteID: integer().notNull(),
-		resourceID: integer().notNull(),
-		difficulty_default: integer(),
-		difficulty_15_sec: integer(),
-		difficulty_30_sec: integer(),
-		difficulty_1_min: integer(),
-		difficulty_3_min: integer(),
-		difficulty_5_min: integer(),
-		difficulty_10_min: integer(),
+		resourceID: integer(),
+		difficultyConfig: jsonb().$type<DifficultyConfigValue>().default({
+			default: 200000,
+			custom: []
+		}),
 		createdAt: timestamp({ withTimezone: true }).defaultNow().notNull(),
 		updatedAt: timestamp({ withTimezone: true }).defaultNow().notNull()
 	},
@@ -127,13 +143,15 @@ export const difficultyConfigTable = pgTable(
 	]
 );
 
-export const settingsTable = pgTable(
-	"settings",
-	{
-		id: integer().primaryKey().generatedAlwaysAsIdentity(),
-		key: text().notNull().unique(),
-		value: jsonb().notNull(),
-		createdAt: timestamp({ withTimezone: true }).defaultNow().notNull(),
-		updatedAt: timestamp({ withTimezone: true }).defaultNow().notNull()
-	}
-);
+export const settingsTable = pgTable("settings", {
+	id: integer().primaryKey().generatedAlwaysAsIdentity(),
+	key: text().notNull().unique(),
+	value: jsonb().notNull(),
+	createdAt: timestamp({ withTimezone: true }).defaultNow().notNull(),
+	updatedAt: timestamp({ withTimezone: true }).defaultNow().notNull()
+});
+
+export type Resource = InferSelectModel<typeof resourcesTable>;
+export type ChallengeLog = InferSelectModel<typeof challengesLogTable>;
+export type DifficultyConfig = InferSelectModel<typeof difficultyConfigTable>;
+export type Settings = InferSelectModel<typeof settingsTable>;

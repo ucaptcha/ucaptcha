@@ -10,8 +10,8 @@ import {
 	SidebarMenuButton,
 	SidebarMenuItem
 } from "@/components/ui/sidebar";
-import { verifyAuthToken } from "@/lib/auth/jwt";
-import { ShieldCheck, FileText, FlaskConical, Gauge, Globe, User } from "lucide-react";
+import { verifyAuthToken } from "@shared/auth/jwt";
+import { ShieldCheck, FileText, FlaskConical, Gauge, Globe, User, Settings } from "lucide-react";
 import { cookies } from "next/headers";
 
 export async function AppSidebar() {
@@ -41,7 +41,7 @@ export async function AppSidebar() {
 						<SidebarMenu>
 							<SidebarMenuItem key="dashboard">
 								<SidebarMenuButton asChild>
-									<a href="/">
+									<a href="/dashboard">
 										<Gauge />
 										<span>Dashboard</span>
 									</a>
@@ -64,7 +64,7 @@ export async function AppSidebar() {
 						<SidebarMenu>
 							<SidebarMenuItem key="sites">
 								<SidebarMenuButton asChild>
-									<a href="/">
+									<a href="/sites">
 										<Globe />
 										<span>Sites</span>
 									</a>
@@ -72,7 +72,7 @@ export async function AppSidebar() {
 							</SidebarMenuItem>
 							<SidebarMenuItem key="resources">
 								<SidebarMenuButton asChild>
-									<a href="/playground">
+									<a href="/resources">
 										<FileText />
 										<span>Resources</span>
 									</a>
@@ -96,9 +96,9 @@ export async function AppSidebar() {
 								</SidebarMenuItem>
 								<SidebarMenuItem key="resources">
 									<SidebarMenuButton asChild>
-										<a href="/playground">
-											<FileText />
-											<span>Resources</span>
+										<a href="/admin/settings">
+											<Settings />
+											<span>Settings</span>
 										</a>
 									</SidebarMenuButton>
 								</SidebarMenuItem>

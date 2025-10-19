@@ -28,9 +28,9 @@ export default function RootLayout({
 			<body className={`${geistSans.variable} ${geistMono.variable} antialiased`}>
 				<SidebarProvider className="flex max-w-screen">
 					<AppSidebar />
-					<SidebarInset>
+					<SidebarInset className="flex items-center">
 						<SidebarTrigger className="absolute top-2 left-2" />
-							<main className="px-4 lg:px-8 w-full pt-8 lg:pt-12 2xl:px-20">
+							<main className="px-4 lg:px-8 w-full pt-8 lg:pt-12 sm:max-w-xl md:max-w-2xl lg:max-w-4xl xl:max-w-7xl">
 								{children}
 							</main>
 					</SidebarInset>

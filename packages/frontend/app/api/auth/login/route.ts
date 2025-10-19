@@ -3,7 +3,7 @@ import { db } from "@db/pg";
 import { usersTable } from "@db/schema";
 import { eq } from "drizzle-orm";
 import { verifyPassword } from "@/lib/auth/password";
-import { generateAuthToken } from "@/lib/auth/jwt";
+import { generateAuthToken } from "@shared/auth/jwt";
 
 export async function POST(request: NextRequest) {
 	try {

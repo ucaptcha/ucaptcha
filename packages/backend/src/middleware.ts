@@ -5,6 +5,7 @@ import { corsMiddleware } from "@/middleware/cors";
 import { contentType } from "middleware/contentType.ts";
 import { bodyLimitForPing } from "middleware/bodyLimits.ts";
 import { newChallengeRateLimiter } from "@/middleware/rateLimiters";
+import { authMiddleware } from "@/middleware/auth.ts";
 
 export function configureMiddleWares(app: Hono<{ Variables: Variables }>) {
 	app.use("*", corsMiddleware);
@@ -14,4 +15,7 @@ export function configureMiddleWares(app: Hono<{ Variables: Variables }>) {
 	app.use(timing());
 
 	app.use("*", bodyLimitForPing);
+
+	app.use("/resources", authMiddleware);
+	app.use("/resources/*", authMiddleware);
 }

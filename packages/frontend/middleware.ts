@@ -1,12 +1,20 @@
 import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
-import { verifyAuthToken } from "@/lib/auth/jwt";
+import { verifyAuthToken } from "@shared/auth/jwt";
 
-const protectedRoutes = ["/playground", "/dashboard", "/admin"];
+const protectedRoutes = ["/playground", "/dashboard", "/admin", "/resources"];
 const publicRoutes = ["/", "/api/auth"];
 
 export async function middleware(request: NextRequest) {
 	const { pathname, searchParams } = request.nextUrl;
+
+	const authToken = request.cookies.get("auth_token")?.value;
+
+	const { valid } = await verifyAuthToken(authToken!);
+
+	if (valid && pathname === "/") {
+		return NextResponse.redirect(new URL("/dashboard", request.url));
+	} 
 
 	const isPublicRoute = publicRoutes.some((route) => pathname === route);
 
@@ -20,8 +28,6 @@ export async function middleware(request: NextRequest) {
 		return NextResponse.next();
 	}
 
-	const authToken = request.cookies.get("auth_token")?.value;
-
 	if (!authToken && !pathname.startsWith("/login")) {
 		const loginUrl = new URL("/login", request.url);
 		loginUrl.searchParams.set("redirect", pathname);
@@ -29,8 +35,6 @@ export async function middleware(request: NextRequest) {
 	} else if (!authToken && pathname.startsWith("/login")) {
 		return NextResponse.next();
 	}
-
-	const { valid } = await verifyAuthToken(authToken!);
 
 	if (!valid && pathname.startsWith("/login")) {
 		return NextResponse.next();

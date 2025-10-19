@@ -21,7 +21,8 @@
 		"paths": {
 			"@/*": ["./*"],
 			"@core/*": ["../core/*"],
-			"@db/*": ["../db/core/*"]
+			"@db/*": ["../shared/db/core/*"],
+			"@shared/*": ["../shared/*"]
 		}
 	},
 	"include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", ".next/types/**/*.ts"],

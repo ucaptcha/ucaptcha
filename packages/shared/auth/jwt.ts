@@ -1,7 +1,7 @@
 import { User } from "@db/schema";
 import { JWTPayload, SignJWT, jwtVerify } from "jose";
 
-const REFRESH_TOKEN_EXPIRES_IN = "7d";
+const REFRESH_TOKEN_EXPIRES_IN = "14d";
 
 export async function generateAuthToken(user: User) {
 	const secret = new TextEncoder().encode(
@@ -22,7 +22,7 @@ export async function generateAuthToken(user: User) {
 	return refreshToken;
 }
 
-interface JWTData {
+export interface JWTData {
 	userID: number;
 	email: string;
 	role: string;

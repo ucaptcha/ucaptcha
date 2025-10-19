@@ -9,7 +9,7 @@ import {
 } from "@/components/ui/card";
 import { getUserQuota } from "@db/quota";
 import { cookies } from "next/headers";
-import { verifyAuthToken } from "@/lib/auth/jwt";
+import { verifyAuthToken } from "@shared/auth/jwt";
 import { Quota } from "@/components/Dashboard";
 import {
 	getSolvedChallengesInLastMonthByUser,

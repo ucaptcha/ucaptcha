@@ -11,7 +11,8 @@
 		"paths": {
 			"@core/*": ["../core/*"],
 			"@/*": ["./*"],
-			"@db/*": ["../db/core/*"],
+			"@db/*": ["../shared/db/core/*"],
+			"@shared/*": ["../shared/*"]
 		},
 		"allowSyntheticDefaultImports": true,
 		"allowImportingTsExtensions": true,
