@@ -1,6 +1,6 @@
 import * as Comlink from "comlink";
-import { compute_vdf } from "@alikia/ucaptcha-vdf-solver-wasm";
-import rust_wasm_init from "@alikia/ucaptcha-vdf-solver-wasm";
+import { compute_vdf } from "@ucaptcha/solver-wasm";
+import rust_wasm_init from "@ucaptcha/solver-wasm";
 import type { VdfWorkerApi, VdfProgressCallback } from "./types";
 
 const wasmReady = rust_wasm_init();

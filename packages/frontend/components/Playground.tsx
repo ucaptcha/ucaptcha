@@ -6,9 +6,8 @@ import { Textarea } from "@/components/ui/textarea";
 import { atom, useAtom, useAtomValue, useSetAtom } from "jotai";
 import { Button } from "./ui/button";
 import { atomWithStorage } from "jotai/utils";
-import * as Comlink from "comlink";
-import { useEffect, useRef, useState } from "react";
-import solver from "@ucaptcha/js";
+import { useEffect, useState } from "react";
+import vdfSolver from "@ucaptcha/js";
 
 export function buildUrl(
 	baseURL: string,
@@ -173,39 +172,20 @@ export function Solving() {
 	const [timeCost, setTimeCost] = useState(0);
 	const setResult = useSetAtom(resultAtom);
 	const apiURL = useAtomValue(apiUrlAtom);
-	const workerRef = useRef<Comlink.Remote<WorkerApi> | null>(null);
-	const workerInstance = useRef<Worker | null>(null);
 
 	async function solve() {
-		if (!workerRef.current) {
-			return 
-		}
 		try {
 			setSolving(true);
 			const { g, T, N } = JSON.parse(serverResponse);
 			const start = performance.now();
 			setTimeStart(start);
-			const result = await workerRef.current.computeVDF(g, N, T);
+			const result = await vdfSolver.compute(g, N, T);
 			setResult(result.toString());
-			const result_1 = solver.compute(g, N, T);
-			console.log(result_1, result);
 			setSolving(false);
 		} finally {
 			setSolving(false);
 		}
 	}
-
-	useEffect(() => {
-		workerInstance.current = new Worker(new URL("@/workers/vdfWorkers.ts", import.meta.url), {
-			type: "module"
-		});
-
-		workerRef.current = Comlink.wrap<WorkerApi>(workerInstance.current);
-
-		return () => {
-			workerInstance.current?.terminate();
-		};
-	}, []);
 
 	useEffect(() => {
 		const timer = setInterval(() => {

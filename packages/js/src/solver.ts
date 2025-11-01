@@ -17,12 +17,12 @@ export class VdfSolver {
 
 		if (this.mode === "bigint") {
 			console.log("VDF Solver: Using BigInt native worker.");
-			this.worker = new Worker(new URL("./vdf.worker.bigint.ts", import.meta.url), {
+			this.worker = new Worker(new URL("./worker.native.js", import.meta.url), {
 				type: "module"
 			});
 		} else {
 			console.log("VDF Solver: Using WASM worker.");
-			this.worker = new Worker(new URL("./vdf.worker.wasm.ts", import.meta.url), {
+			this.worker = new Worker(new URL("./worker.wasm.js", import.meta.url), {
 				type: "module"
 			});
 		}
