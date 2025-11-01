@@ -6,7 +6,8 @@
 		"packages/backend",
 		"packages/frontend",
 		"packages/core",
-		"packages/shared"
+		"packages/shared",
+		"packages/js"
 	],
 	"scripts": {
 		"format": "prettier --write ."

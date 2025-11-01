@@ -1,5 +1,5 @@
 [package]
-name = "ucaptcha-vdf-solver-wasm"
+name = "solver-wasm"
 version = "0.1.0"
 authors = ["alikia2x <alikia2x@outlook.com>"]
 edition = "2018"

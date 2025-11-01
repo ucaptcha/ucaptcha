@@ -8,6 +8,7 @@ import { Button } from "./ui/button";
 import { atomWithStorage } from "jotai/utils";
 import * as Comlink from "comlink";
 import { useEffect, useRef, useState } from "react";
+import solver from "@ucaptcha/js";
 
 export function buildUrl(
 	baseURL: string,
@@ -186,6 +187,8 @@ export function Solving() {
 			setTimeStart(start);
 			const result = await workerRef.current.computeVDF(g, N, T);
 			setResult(result.toString());
+			const result_1 = solver.compute(g, N, T);
+			console.log(result_1, result);
 			setSolving(false);
 		} finally {
 			setSolving(false);

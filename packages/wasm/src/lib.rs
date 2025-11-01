@@ -1,5 +1,3 @@
-mod utils;
-
 use wasm_bindgen::prelude::*;
 use malachite_base::num::arithmetic::traits::ModMulAssign;
 use malachite_nz::natural::Natural;
