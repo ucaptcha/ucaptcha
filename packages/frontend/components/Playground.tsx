@@ -7,7 +7,7 @@ import { atom, useAtom, useAtomValue, useSetAtom } from "jotai";
 import { Button } from "./ui/button";
 import { atomWithStorage } from "jotai/utils";
 import { useEffect, useState } from "react";
-import vdfSolver from "@ucaptcha/js";
+import { VdfSolver } from "@ucaptcha/js";
 
 export function buildUrl(
 	baseURL: string,
@@ -160,9 +160,7 @@ export function Validating({ className }: { className?: string }) {
 	);
 }
 
-type WorkerApi = {
-	computeVDF(g: string, N: string, T: bigint): Promise<string>;
-};
+const solverAtom = atom<VdfSolver>(); 
 
 export function Solving() {
 	const [serverResponse, setServerResponse] = useAtom(serverResponseAtom);
@@ -172,14 +170,21 @@ export function Solving() {
 	const [timeCost, setTimeCost] = useState(0);
 	const setResult = useSetAtom(resultAtom);
 	const apiURL = useAtomValue(apiUrlAtom);
+	const [solver, setSolver] = useAtom(solverAtom);
+
+	useEffect(() => {
+		const s = new VdfSolver();
+		setSolver(s);
+	}, []);
 
 	async function solve() {
+		if (!solver) return;
 		try {
 			setSolving(true);
 			const { g, T, N } = JSON.parse(serverResponse);
 			const start = performance.now();
 			setTimeStart(start);
-			const result = await vdfSolver.compute(g, N, T);
+			const result = await solver.compute(g, N, T);
 			setResult(result.toString());
 			setSolving(false);
 		} finally {
@@ -191,7 +196,7 @@ export function Solving() {
 		const timer = setInterval(() => {
 			if (solving) {
 				const timeEnd = performance.now();
-				const timeDiff = (timeEnd - timeStart);
+				const timeDiff = timeEnd - timeStart;
 				setTimeCost(timeDiff);
 			}
 		}, 16);
