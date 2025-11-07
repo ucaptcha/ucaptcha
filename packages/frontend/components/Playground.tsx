@@ -139,6 +139,10 @@ export function Validating({ className }: { className?: string }) {
 			return <span className="mt-4 font-bold text-red-600">Validation Result: Failed</span>;
 	}
 
+	useEffect(() => {
+		setStatus("pending");
+	}, [serverResponse, result]);
+
 	return (
 		<div className={className}>
 			<Typography.H2 className="mt-4">Validating</Typography.H2>

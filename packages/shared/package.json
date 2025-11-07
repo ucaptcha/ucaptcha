@@ -9,7 +9,7 @@
 	},
 	"dependencies": {
 		"@alikia/random-key": "^1.1.1",
-		"drizzle-orm": "^0.44.4",
+		"@koshnic/ratelimit": "^1.0.3",
 		"ioredis": "^5.6.1",
 		"postgres": "^3.4.5"
 	},

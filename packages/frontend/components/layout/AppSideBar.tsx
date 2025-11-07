@@ -11,7 +11,7 @@ import {
 	SidebarMenuItem
 } from "@/components/ui/sidebar";
 import { verifyAuthToken } from "@shared/auth/jwt";
-import { ShieldCheck, FileText, FlaskConical, Gauge, Globe, User, Settings, BarChart3 } from "lucide-react";
+import { ShieldCheck, FileText, FlaskConical, Gauge, Globe, User, Settings, BarChart3, UserCircle } from "lucide-react";
 import { cookies } from "next/headers";
 
 export async function AppSidebar() {
@@ -52,6 +52,14 @@ export async function AppSidebar() {
 									<a href="/playground">
 										<FlaskConical />
 										<span>Playground</span>
+									</a>
+								</SidebarMenuButton>
+							</SidebarMenuItem>
+							<SidebarMenuItem key="account">
+								<SidebarMenuButton asChild>
+									<a href="/account">
+										<UserCircle />
+										<span>Account</span>
 									</a>
 								</SidebarMenuButton>
 							</SidebarMenuItem>

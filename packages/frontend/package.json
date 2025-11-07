@@ -4,10 +4,7 @@
 	"scripts": {
 		"dev": "next dev --port 7922",
 		"build": "next build",
-		"start": "next start --port 7922",
-		"drizzle:generate": "drizzle-kit generate",
-		"drizzle:migrate": "drizzle-kit migrate",
-		"drizzle:studio": "drizzle-kit studio"
+		"start": "next start --port 7922"
 	},
 	"dependencies": {
 		"@alikia/random-key": "^1.1.1",
@@ -28,7 +25,6 @@
 		"class-variance-authority": "^0.7.1",
 		"clsx": "^2.1.1",
 		"comlink": "^4.4.2",
-		"drizzle-orm": "^0.44.6",
 		"ioredis": "^5.8.0",
 		"jotai": "^2.15.0",
 		"lucide-react": "^0.544.0",

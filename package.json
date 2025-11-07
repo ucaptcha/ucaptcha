@@ -22,6 +22,7 @@
 	"dependencies": {
 		"@alikia/random-key": "^1.1.1",
 		"@number-flow/react": "^0.5.10",
-		"jose": "^6.1.0"
+		"jose": "^6.1.0",
+		"drizzle-orm": "^0.44.7"
 	}
 }

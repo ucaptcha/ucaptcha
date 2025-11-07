@@ -1,4 +1,4 @@
-import { getDifficultyConfig } from "@db/difficulty/getDifficulty";
+import { getDynamicDifficulty } from "@db/difficulty/getDynamicDifficulty";
 import { getSiteByKey, getSiteIDFromKey } from "@db/sites/getSite";
 import { Context } from "hono";
 import { redis } from "@db/redis";
@@ -23,8 +23,7 @@ export const getNewChallenge = async (c: Context) => {
 		return errorResponse(c, "Given siteKey or resource does not exist.", 404);
 	}
 	const userID = site.userID;
-	const { difficultyConfig } = await getDifficultyConfig(siteID, resourceID);
-	const difficulty = difficultyConfig.default;
+	const difficulty = await getDynamicDifficulty(siteID, resourceID);
 	const challenge = await generateChallenge(difficulty, userID, siteKey, resource);
 	if (!challenge) {
 		return errorResponse(c, "No challenge available.", 500);
