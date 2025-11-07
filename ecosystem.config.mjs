@@ -6,6 +6,9 @@ export const apps = [
 		script: "src/wrapper.ts",
 		cwd: "./packages/backend",
 		interpreter: "bun",
+		env: {
+			DATABASE_URL: process.env.DATABASE_URL
+		}
 	},
 	{
 		name: "ucaptcha-frontend",
