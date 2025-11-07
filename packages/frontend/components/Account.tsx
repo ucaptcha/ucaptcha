@@ -7,20 +7,11 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { Typography } from "@/components/ui/typography";
-import { User, Key, Shield, Copy, RefreshCw, Eye, EyeOff, AlertTriangle } from "lucide-react";
-
-interface UserInfo {
-	id: number;
-	name: string;
-	email: string;
-	role: string;
-	jwtSecret: string;
-	createdAt: string;
-	updatedAt: string;
-}
+import { User as UserIcon, Key, Shield, Copy, RefreshCw, Eye, EyeOff, AlertTriangle } from "lucide-react";
+import { type User } from "@db/schema";
 
 interface AccountProps {
-	user: UserInfo;
+	user: Omit<User, "password">;
 	userID: number;
 }
 
@@ -99,7 +90,7 @@ export default function Account({ user, userID }: AccountProps) {
 				<Card>
 					<CardHeader>
 						<CardTitle className="flex items-center gap-2">
-							<User className="size-5" />
+							<UserIcon className="size-5" />
 							User Information
 						</CardTitle>
 						<CardDescription>
