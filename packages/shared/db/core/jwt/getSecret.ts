@@ -13,6 +13,6 @@ export const getJWTSecretForUser = async (uid: number) => {
 	if (result.length === 0) {
 		return null;
 	}
-	await redis.set(cacheKey, result[0].secret);
+	await redis.setex(cacheKey, 3600, result[0].secret);
 	return result[0].secret;
 };

@@ -51,7 +51,7 @@ export async function getResourceID(siteKey: string, name: string) {
 		return null;
 	}
 
-	await redis.set(cacheKey, result[0].id);
+	await redis.setex(cacheKey, 3600, result[0].id);
 	return result[0].id;
 }
 

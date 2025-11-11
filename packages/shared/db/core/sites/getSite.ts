@@ -13,7 +13,7 @@ export async function getSiteByKey(siteKey: string) {
 	if (result.length === 0) {
 		return null;
 	}
-	await redis.set(cacheKey, JSON.stringify(result[0]));
+	await redis.setex(cacheKey, 3600, JSON.stringify(result[0]));
 	return result[0];
 }
 
@@ -35,7 +35,7 @@ export const getSiteFromID = async (id: number) => {
 	if (result.length == 0) {
 		return null;
 	}
-	await redis.set(cacheKey, JSON.stringify(result[0]));
+	await redis.setex(cacheKey, 3600, JSON.stringify(result[0]));
 	return result[0];
 };
 

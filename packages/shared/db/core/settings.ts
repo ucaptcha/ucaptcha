@@ -12,7 +12,7 @@ interface AllSettings {
 const defaultSettings = {
 	rateLimitPerSec: 50,
 	monthlyQuota: 1000000,
-	allowSignup: false,
+	allowSignup: false
 } satisfies AllSettings;
 
 type SettingKey = keyof AllSettings;
@@ -25,11 +25,7 @@ const convertTypeFromRedis = <K extends SettingKey>(key: K, value: string): AllS
 	const defaultValue = defaultSettings[key];
 	if (typeof defaultValue === "number") {
 		return Number(value) as AllSettings[K];
-	} 
-    // else if (typeof defaultValue === "string") {
-	// 	return value as AllSettings[K];
-	// } 
-    else if (typeof defaultValue === "boolean") {
+	} else if (typeof defaultValue === "boolean") {
 		return (value === "true") as AllSettings[K];
 	}
 	throw new Error(`Unsupported type for setting key: ${key}`);
@@ -58,14 +54,14 @@ class SettingsManager {
 		}
 
 		const value = result[0].value;
-		await redis.set(cacheKey, String(value));
+		await redis.setex(cacheKey, 86400, String(value));
 		return convertTypeFromRedis(key, String(value));
 	}
 
 	async set<K extends SettingKey>(key: K, value: AllSettings[K]): Promise<void> {
 		const cacheKey = this.cacheKey(key);
 
-		await redis.set(cacheKey, convertTypeToRedis(value));
+		await redis.setex(cacheKey, 86400, convertTypeToRedis(value));
 
 		await db.insert(settingsTable).values({ key, value }).onConflictDoUpdate({
 			target: settingsTable.key,

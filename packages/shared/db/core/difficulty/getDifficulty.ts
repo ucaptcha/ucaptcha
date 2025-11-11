@@ -25,6 +25,6 @@ export async function getDifficultyConfig(
 	if (!data[0]) {
 		return null;
 	}
-	await redis.set(cacheKey, JSON.stringify(data[0]));
+	await redis.setex(cacheKey, 3600, JSON.stringify(data[0]));
 	return data[0];
 }

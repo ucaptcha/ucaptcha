@@ -17,7 +17,7 @@ export async function updateResource(id: number, data: Partial<Resource>) {
 	}
 	const { siteKey } = s;
 	const cacheKey = `ucaptcha:resource_id:${siteKey}-${resource.name}`;
-	await redis.set(cacheKey, JSON.stringify(data));
+	await redis.setex(cacheKey, 3600,JSON.stringify(data));
 
 	return resource;
 }
